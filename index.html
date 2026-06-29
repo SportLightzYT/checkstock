@@ -165,8 +165,8 @@ function exportTxt(){
   l.push("");l.push("--- หมดสต็อก ("+ns.length+") ---");l.push("");
   for(i=0;i<ns.length;i++){l.push((i+1)+". "+ns[i].p.name);l.push("   หมวด: "+ns[i].p.category+" | ยี่ห้อ: "+ns[i].p.brand);l.push("   --------------------------------------")}
   l.push("");l.push("==============================================");l.push("   รวมทั้งหมด: "+PRODUCTS.length+" รายการ");l.push("   มีสต็อก: "+hs.length+" รายการ");l.push("   หมดสต็อก: "+ns.length+" รายการ");l.push("==============================================");
-  var txt=l.join("\n"),b=new Blob([txt],{type:"text/plain;charset=utf-8"}),u=URL.createObjectURL(b);
-  var a=document.createElement("a");a.href=u;a.download="PKPAINT_Stock_"+n.toISOString().slice(0,10)+".txt";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);t("Export แล้ว")
+  var bom="\uFEFF",txt=bom+l.join("\r\n"),b=new Blob([txt],{type:"text/plain;charset=utf-8"}),u=URL.createObjectURL(b);
+  var a=document.createElement("a");a.href=u;a.download="PKPAINT_Stock_"+n.toISOString().slice(0,10)+".txt";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(u);t("Export เสร็จ")
 }
 
 window.addEventListener("beforeunload",function(){saveStock()});

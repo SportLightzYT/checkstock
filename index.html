@@ -1,297 +1,701 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="th" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚡ SpeedTest - วัดความเร็วอินเทอร์เน็ต</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>PK Paint — Inventory</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0e1a;--card:#131a2e;--accent:#00d4ff;--accent2:#7c3aed;--text:#e2e8f0;--muted:#64748b;--success:#10b981;--glow:0 0 20px rgba(0,212,255,.3)}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow-x:hidden;padding:20px}
-body::before{content:'';position:fixed;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 20%,rgba(124,58,237,.08) 0%,transparent 50%),radial-gradient(ellipse at 70% 80%,rgba(0,212,255,.06) 0%,transparent 50%);animation:bgPulse 8s ease-in-out infinite alternate;z-index:-1}
-@keyframes bgPulse{0%{transform:scale(1) rotate(0deg)}100%{transform:scale(1.05) rotate(2deg)}}
-.container{width:100%;max-width:700px;text-align:center}
-h1{font-size:clamp(1.5rem,4vw,2.2rem);font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
-.subtitle{color:var(--muted);font-size:.9rem;margin-bottom:30px}
-.gauge-wrap{position:relative;width:280px;height:280px;margin:0 auto 30px}
-.gauge-svg{width:100%;height:100%;transform:rotate(-90deg)}
-.gauge-bg{fill:none;stroke:#1e293b;stroke-width:12;stroke-linecap:round}
-.gauge-fill{fill:none;stroke:url(#gaugeGrad);stroke-width:12;stroke-linecap:round;stroke-dasharray:565.48;stroke-dashoffset:565.48;transition:stroke-dashoffset .3s ease}
-.gauge-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
-.gauge-value{font-size:clamp(2.5rem,8vw,3.5rem);font-weight:900;color:#fff;line-height:1}
-.gauge-unit{font-size:.9rem;color:var(--muted);margin-top:4px}
-.gauge-label{font-size:.75rem;color:var(--accent);text-transform:uppercase;letter-spacing:2px;margin-top:8px;font-weight:600}
-.btn-start{position:relative;padding:16px 48px;font-size:1.1rem;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent2),var(--accent));border:none;border-radius:50px;cursor:pointer;transition:all .3s ease;box-shadow:var(--glow);text-transform:uppercase;letter-spacing:1px}
-.btn-start:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 0 40px rgba(0,212,255,.5)}
-.btn-start:active{transform:scale(.97)}
-.btn-start:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
-.btn-start .spinner{display:none;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin-right:10px;vertical-align:middle}
-.btn-start.loading .spinner{display:inline-block}
-@keyframes spin{to{transform:rotate(360deg)}}
-.results{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px;opacity:0;transform:translateY(20px);transition:all .5s ease}
-.results.show{opacity:1;transform:translateY(0)}
-.result-card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:20px 12px;transition:all .3s ease}
-.result-card:hover{border-color:rgba(0,212,255,.3);transform:translateY(-3px)}
-.result-icon{font-size:1.5rem;margin-bottom:8px}
-.result-label{font-size:.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px}
-.result-value{font-size:clamp(1.3rem,4vw,1.8rem);font-weight:800;color:#fff}
-.result-unit{font-size:.7rem;color:var(--muted)}
-.result-card.ping .result-value{color:#f59e0b}
-.result-card.down .result-value{color:var(--accent)}
-.result-card.up .result-value{color:var(--success)}
-.status{margin-top:20px;font-size:.85rem;color:var(--muted);min-height:24px;transition:all .3s}
-.status.active{color:var(--accent)}
-.progress-bar{width:100%;height:4px;background:#1e293b;border-radius:2px;margin-top:16px;overflow:hidden;opacity:0;transition:opacity .3s}
-.progress-bar.show{opacity:1}
-.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent2),var(--accent));border-radius:2px;transition:width .3s ease}
-.server-info{margin-top:20px;font-size:.75rem;color:var(--muted);opacity:.7}
-@media(max-width:480px){.gauge-wrap{width:220px;height:220px}.results{grid-template-columns:1fr;gap:12px}.result-card{display:flex;align-items:center;gap:12px;text-align:left;padding:14px 16px}.result-icon{margin:0;font-size:1.2rem}.result-label{margin:0}.result-value{margin-left:auto}}
-@keyframes fadeInUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
-.container{animation:fadeInUp .6s ease}
+/* ===== Design Tokens ===== */
+:root {
+  --bg: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-sidebar: #ffffff;
+  --bg-hover: #f1f5f9;
+  --bg-active: #eff6ff;
+  --bg-accent: #3b82f6;
+  --bg-accent-hover: #2563eb;
+  --bg-accent-soft: #eff6ff;
+  --bg-red: #fef2f2;
+  --bg-green: #f0fdf4;
+  --bg-yellow: #fefce8;
+  --text: #0f172a;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --text-inverse: #ffffff;
+  --text-accent: #2563eb;
+  --border: #e2e8f0;
+  --border-light: #f1f5f9;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.06);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,.08);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,.12);
+  --font: 'Noto Sans Thai','Inter',system-ui,-apple-system,sans-serif;
+  --font-mono: 'JetBrains Mono','SF Mono',monospace;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px;
+  --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px; --radius-full: 999px;
+  --ease: cubic-bezier(.4,0,.2,1);
+  --ease-bounce: cubic-bezier(.34,1.56,.64,1);
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --sidebar-w: 240px;
+  --navbar-h: 56px;
+  --drawer-w: 400px;
+  --max-content: 1200px;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { height:100%; }
+body {
+  font-family:var(--font); background:var(--bg); color:var(--text);
+  font-size:14px; line-height:1.5; -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+::selection { background:var(--bg-accent); color:#fff; }
+:focus-visible { outline:2px solid var(--bg-accent); outline-offset:2px; border-radius:var(--radius-sm); }
+::-webkit-scrollbar { width:6px; height:6px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--text-tertiary); border-radius:var(--radius-full); }
+.app { display:flex; height:100vh; overflow:hidden; }
+.sidebar {
+  width:var(--sidebar-w); min-width:var(--sidebar-w); height:100vh;
+  background:var(--bg-sidebar); border-right:1px solid var(--border);
+  display:flex; flex-direction:column; z-index:100;
+  transition:transform var(--duration-normal) var(--ease);
+}
+.sidebar-brand {
+  height:var(--navbar-h); display:flex; align-items:center; gap:var(--space-3);
+  padding:0 var(--space-5); border-bottom:1px solid var(--border-light);
+  font-weight:700; font-size:16px; letter-spacing:-.01em;
+}
+.sidebar-brand .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--bg-accent); }
+.sidebar-nav { flex:1; overflow-y:auto; padding:var(--space-3) var(--space-3); }
+.sidebar-section-title {
+  font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--text-tertiary); padding:var(--space-3) var(--space-3) var(--space-2); user-select:none;
+}
+.sidebar-item {
+  display:flex; align-items:center; gap:var(--space-3); padding:var(--space-2) var(--space-3);
+  border-radius:var(--radius-md); cursor:pointer; transition:all var(--duration-fast) var(--ease);
+  font-size:13px; font-weight:500; color:var(--text-secondary); text-decoration:none;
+  user-select:none; position:relative;
+}
+.sidebar-item:hover { background:var(--bg-hover); color:var(--text); }
+.sidebar-item.active { background:var(--bg-accent-soft); color:var(--text-accent); font-weight:600; }
+.sidebar-item .count-badge {
+  margin-left:auto; font-size:11px; color:var(--text-tertiary);
+  background:var(--bg-hover); padding:1px 8px; border-radius:var(--radius-full);
+  font-weight:500; min-width:24px; text-align:center;
+}
+.sidebar-item.active .count-badge { background:var(--bg-accent-soft); color:var(--text-accent); }
+.sidebar-item .icon { width:18px; height:18px; display:flex; align-items:center; justify-content:center; font-size:16px; }
+.main { flex:1; display:flex; flex-direction:column; min-width:0; height:100vh; overflow:hidden; }
+.navbar {
+  height:var(--navbar-h); min-height:var(--navbar-h);
+  display:flex; align-items:center; gap:var(--space-4);
+  padding:0 var(--space-6); border-bottom:1px solid var(--border-light);
+  background:var(--bg-card);
+}
+.navbar .menu-btn {
+  display:none; width:36px; height:36px; border:none; background:none;
+  border-radius:var(--radius-md); cursor:pointer; font-size:20px;
+  align-items:center; justify-content:center; color:var(--text-secondary);
+}
+.navbar .menu-btn:hover { background:var(--bg-hover); }
+.navbar .search-wrap { flex:1; position:relative; max-width:400px; }
+.navbar .search-wrap .search-icon {
+  position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  color:var(--text-tertiary); font-size:16px; pointer-events:none;
+}
+.navbar .search-wrap input {
+  width:100%; height:36px; padding:0 12px 0 36px;
+  border:1px solid var(--border); border-radius:var(--radius-lg);
+  background:var(--bg); font-size:13px; font-family:var(--font);
+  outline:none; transition:all var(--duration-fast) var(--ease);
+}
+.navbar .search-wrap input:focus {
+  border-color:var(--bg-accent); background:var(--bg-card);
+  box-shadow:0 0 0 3px rgba(59,130,246,.1);
+}
+.navbar .search-wrap input::placeholder { color:var(--text-tertiary); }
+.navbar-actions { display:flex; gap:var(--space-2); align-items:center; margin-left:auto; }
+.toolbar {
+  display:flex; align-items:center; gap:var(--space-3);
+  padding:var(--space-4) var(--space-6); flex-wrap:wrap; min-height:52px;
+}
+.toolbar .filters { display:flex; gap:var(--space-2); flex-wrap:wrap; margin-left:auto; }
+.toolbar .results-count {
+  font-size:13px; color:var(--text-secondary); font-weight:500; white-space:nowrap;
+}
+.filter-select {
+  appearance:none; -webkit-appearance:none; -moz-appearance:none;
+  height:34px; padding:0 32px 0 12px;
+  border:1px solid var(--border); border-radius:var(--radius-md);
+  background:var(--bg-card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%2394a3b8'/%3E%3C/svg%3E") no-repeat right 12px center;
+  font-size:13px; font-weight:500; font-family:var(--font);
+  color:var(--text); cursor:pointer; outline:none;
+  min-width:150px; transition:all var(--duration-fast) var(--ease);
+}
+.filter-select:hover { border-color:var(--text-tertiary); }
+.filter-select:focus { border-color:var(--bg-accent); box-shadow:0 0 0 3px rgba(59,130,246,.1); }
+.stats-bar {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:1px;
+  margin:0 var(--space-6) var(--space-3);
+  background:var(--border-light); border-radius:var(--radius-lg); overflow:hidden;
+}
+.stat-card {
+  background:var(--bg-card); padding:var(--space-4);
+  text-align:center; cursor:pointer; transition:background var(--duration-fast) var(--ease);
+}
+.stat-card:hover { background:var(--bg-hover); }
+.stat-card .stat-value { font-size:20px; font-weight:700; line-height:1.2; }
+.stat-card .stat-label { font-size:11px; color:var(--text-tertiary); font-weight:500; margin-top:2px; }
+.stat-card[data-status="total"] .stat-value { color:var(--text); }
+.stat-card[data-status="in"] .stat-value { color:#059669; }
+.stat-card[data-status="low"] .stat-value { color:#d97706; }
+.stat-card[data-status="out"] .stat-value { color:#dc2626; }
+.table-wrap { flex:1; overflow:auto; padding:0 var(--space-6) var(--space-6); }
+table { width:100%; border-collapse:separate; border-spacing:0; }
+thead { position:sticky; top:0; z-index:10; }
+th {
+  background:var(--bg); font-size:11px; font-weight:600;
+  text-transform:uppercase; letter-spacing:.04em; color:var(--text-tertiary);
+  padding:var(--space-2) var(--space-3); text-align:left;
+  border-bottom:1px solid var(--border); white-space:nowrap; user-select:none;
+}
+th.sortable { cursor:pointer; }
+th.sortable:hover { color:var(--text); }
+th .sort-icon { display:inline-block; width:14px; font-size:10px; margin-left:2px; }
+td { padding:var(--space-2) var(--space-3); border-bottom:1px solid var(--border-light); vertical-align:middle; }
+tr { transition:background var(--duration-fast) var(--ease); cursor:pointer; }
+tr:hover td { background:var(--bg-hover); }
+tr.selected td { background:var(--bg-accent-soft); }
+tr.selected:hover td { background:#dbeafe; }
+.mini-img {
+  width:32px; height:32px; border-radius:var(--radius-sm); object-fit:cover;
+  background:var(--bg-hover); flex-shrink:0;
+}
+.cat-tag {
+  display:inline-block; padding:2px 10px; border-radius:var(--radius-full);
+  font-size:10px; font-weight:600; white-space:nowrap;
+}
+.stock-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  padding:2px 10px; border-radius:var(--radius-full); font-size:12px; font-weight:600;
+}
+.stock-badge.in { background:var(--bg-green); color:#065f46; }
+.stock-badge.low { background:var(--bg-yellow); color:#92400e; }
+.stock-badge.out { background:var(--bg-red); color:#991b1b; }
+.stock-inline { display:inline-flex; align-items:center; gap:2px; }
+.stock-inline input {
+  width:36px; height:28px; padding:0 4px; text-align:center;
+  border:1px solid var(--border); border-radius:var(--radius-sm);
+  font-size:12px; font-weight:600; font-family:var(--font);
+  outline:none; background:var(--bg-card);
+}
+.stock-inline input:focus { border-color:var(--bg-accent); box-shadow:0 0 0 2px rgba(59,130,246,.15); }
+.stock-unit { font-size:10px; font-weight:600; color:var(--text-tertiary); margin-left:2px; min-width:24px; }
+.stock-inline .stock-btn {
+  width:24px; height:24px; border:none; border-radius:var(--radius-sm);
+  background:var(--bg-hover); color:var(--text-secondary); font-size:12px; font-weight:700;
+  cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all var(--duration-fast) var(--ease);
+}
+.stock-inline .stock-btn:hover { background:var(--bg-accent); color:#fff; }
+.stock-inline .stock-btn:active { transform:scale(.9); }
+.action-btn {
+  width:30px; height:30px; border:none; border-radius:var(--radius-sm);
+  background:transparent; color:var(--text-tertiary); font-size:14px;
+  cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+  transition:all var(--duration-fast) var(--ease);
+}
+.action-btn:hover { background:var(--bg-hover); color:var(--text); }
+.action-btn.danger:hover { background:var(--bg-red); color:#dc2626; }
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:var(--space-2);
+  padding:var(--space-2) var(--space-4); border:none; border-radius:var(--radius-md);
+  font-size:13px; font-weight:600; font-family:var(--font);
+  cursor:pointer; white-space:nowrap; text-decoration:none;
+  transition:all var(--duration-fast) var(--ease); user-select:none; height:34px; line-height:1;
+}
+.btn:active { transform:scale(.96); }
+.btn-primary { background:var(--bg-accent); color:#fff; }
+.btn-primary:hover { background:var(--bg-accent-hover); }
+.btn-ghost { background:transparent; color:var(--text-secondary); }
+.btn-ghost:hover { background:var(--bg-hover); color:var(--text); }
+.btn-soft { background:var(--bg-accent-soft); color:var(--text-accent); }
+.btn-soft:hover { background:#dbeafe; }
+.btn-danger { background:var(--bg-red); color:#dc2626; }
+.btn-danger:hover { background:#fee2e2; }
+.btn-sm { height:28px; padding:0 var(--space-3); font-size:11px; }
+.drawer-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.3);
+  z-index:200; opacity:0; pointer-events:none;
+  transition:opacity var(--duration-slow) var(--ease);
+}
+.drawer-overlay.open { opacity:1; pointer-events:auto; }
+.drawer {
+  position:fixed; top:0; right:0; bottom:0;
+  width:var(--drawer-w); max-width:100vw;
+  background:var(--bg-card); z-index:201;
+  display:flex; flex-direction:column;
+  transform:translateX(100%); transition:transform var(--duration-slow) var(--ease);
+  box-shadow:var(--shadow-xl);
+}
+.drawer.open { transform:translateX(0); }
+.drawer-header {
+  display:flex; align-items:center; gap:var(--space-3);
+  padding:var(--space-5) var(--space-6); border-bottom:1px solid var(--border-light);
+  min-height:60px;
+}
+.drawer-header h2 { font-size:16px; font-weight:700; flex:1; }
+.drawer-body { flex:1; overflow-y:auto; padding:var(--space-6); }
+.drawer-footer {
+  padding:var(--space-4) var(--space-6); border-top:1px solid var(--border-light);
+  display:flex; gap:var(--space-3); justify-content:flex-end;
+}
+.drawer .product-img {
+  width:100%; aspect-ratio:4/3; border-radius:var(--radius-lg);
+  object-fit:contain; background:var(--bg-hover); margin-bottom:var(--space-4);
+}
+.drawer .field { margin-bottom:var(--space-4); }
+.drawer .field label { display:block; font-size:11px; font-weight:600; color:var(--text-tertiary); margin-bottom:4px; text-transform:uppercase; letter-spacing:.03em; }
+.drawer .field .value { font-size:14px; font-weight:500; padding:var(--space-2) 0; word-break:break-word; }
+.drawer .field input {
+  width:100%; padding:var(--space-2) var(--space-3);
+  border:1px solid var(--border); border-radius:var(--radius-md);
+  font-size:14px; font-family:var(--font); outline:none;
+}
+.drawer .field input:focus { border-color:var(--bg-accent); box-shadow:0 0 0 3px rgba(59,130,246,.1); }
+.drawer .field-row { display:grid; grid-template-columns:1fr 1fr; gap:var(--space-4); }
+.bottomsheet {
+  position:fixed; bottom:0; left:0; right:0;
+  background:var(--bg-card); z-index:201; border-radius:var(--radius-xl) var(--radius-xl) 0 0;
+  transform:translateY(100%); transition:transform var(--duration-slow) var(--ease);
+  max-height:85vh; display:flex; flex-direction:column;
+  box-shadow:0 -4px 20px rgba(0,0,0,.1);
+}
+.bottomsheet.open { transform:translateY(0); }
+.bottomsheet .handle { width:36px; height:4px; border-radius:var(--radius-full); background:var(--border); margin:var(--space-3) auto 0; }
+.bottomsheet-header { padding:var(--space-3) var(--space-5); border-bottom:1px solid var(--border-light); display:flex; align-items:center; }
+.bottomsheet-header h3 { font-size:15px; font-weight:700; flex:1; }
+.bottomsheet-body { flex:1; overflow-y:auto; padding:var(--space-5); }
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:300;
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none; transition:opacity var(--duration-slow) var(--ease);
+  padding:var(--space-4);
+}
+.modal-overlay.open { opacity:1; pointer-events:auto; }
+.modal-box {
+  background:var(--bg-card); border-radius:var(--radius-xl);
+  width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
+  padding:var(--space-6); box-shadow:var(--shadow-xl);
+  transform:scale(.95) translateY(10px); transition:transform var(--duration-slow) var(--ease);
+}
+.modal-overlay.open .modal-box { transform:scale(1) translateY(0); }
+.modal-box h2 { font-size:18px; font-weight:700; margin-bottom:var(--space-5); }
+.modal-box .field { margin-bottom:var(--space-4); }
+.modal-box .field label { display:block; font-size:12px; font-weight:600; color:var(--text-secondary); margin-bottom:4px; }
+.modal-box .field input, .modal-box .field select {
+  width:100%; padding:var(--space-3) var(--space-4);
+  border:1px solid var(--border); border-radius:var(--radius-md);
+  font-size:14px; font-family:var(--font); outline:none; background:var(--bg-card);
+}
+.modal-box .field input:focus, .modal-box .field select:focus {
+  border-color:var(--bg-accent); box-shadow:0 0 0 3px rgba(59,130,246,.1);
+}
+.modal-actions { display:flex; gap:var(--space-3); margin-top:var(--space-6); justify-content:flex-end; }
+.toast-container {
+  position:fixed; bottom:var(--space-6); left:50%; transform:translateX(-50%);
+  z-index:500; display:flex; flex-direction:column; align-items:center; gap:var(--space-2);
+}
+.toast {
+  background:#1e293b; color:#fff; padding:var(--space-3) var(--space-6);
+  border-radius:var(--radius-lg); font-size:13px; font-weight:600;
+  box-shadow:var(--shadow-lg); white-space:nowrap;
+  animation:toast-in var(--duration-normal) var(--ease-bounce);
+}
+.toast.out { animation:toast-out var(--duration-normal) var(--ease) forwards; }
+@keyframes toast-in { from { opacity:0; transform:translateY(20px) scale(.9); } to { opacity:1; transform:translateY(0) scale(1); } }
+@keyframes toast-out { from { opacity:1; } to { opacity:0; transform:translateY(10px); } }
+.empty-state {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:var(--space-12) var(--space-6); text-align:center;
+  color:var(--text-tertiary);
+}
+.empty-state .empty-icon { font-size:48px; margin-bottom:var(--space-4); opacity:.5; }
+.empty-state h3 { font-size:16px; font-weight:600; color:var(--text-secondary); margin-bottom:var(--space-2); }
+.empty-state p { font-size:13px; max-width:300px; }
+.selection-bar {
+  position:fixed; bottom:var(--space-6); left:50%; transform:translateX(-50%) translateY(100px);
+  background:#1e293b; color:#fff; padding:var(--space-3) var(--space-5);
+  border-radius:var(--radius-xl); display:flex; align-items:center; gap:var(--space-4);
+  box-shadow:var(--shadow-xl); z-index:150;
+  transition:transform var(--duration-slow) var(--ease-bounce);
+  font-size:13px; font-weight:500;
+}
+.selection-bar.show { transform:translateX(-50%) translateY(0); }
+.selection-bar .sel-actions { display:flex; gap:var(--space-2); }
+.selection-bar .sel-actions button {
+  padding:var(--space-1) var(--space-3); border:none; border-radius:var(--radius-sm);
+  background:rgba(255,255,255,.1); color:#fff; font-size:12px; font-weight:600;
+  cursor:pointer; font-family:var(--font); transition:background var(--duration-fast) var(--ease);
+}
+.selection-bar .sel-actions button:hover { background:rgba(255,255,255,.2); }
+.selection-bar .sel-close {
+  width:24px; height:24px; border:none; background:none; color:rgba(255,255,255,.5);
+  cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center;
+}
+@media(max-width:1024px) {
+  .sidebar { position:fixed; left:0; top:0; transform:translateX(-100%); }
+  .sidebar.open { transform:translateX(0); box-shadow:var(--shadow-xl); }
+  .navbar .menu-btn { display:flex; }
+  .stats-bar { grid-template-columns:repeat(2,1fr); }
+}
+@media(max-width:640px) {
+  :root { --space-6: 16px; --navbar-h: 48px; }
+  .navbar .search-wrap { max-width:none; }
+  .toolbar { padding:var(--space-3) var(--space-4); }
+  .table-wrap { padding:0 0 var(--space-4); }
+  .stats-bar { margin:0 var(--space-4) var(--space-3); }
+  th, td { padding:var(--space-1) var(--space-2); }
+  .drawer { width:100vw; border-radius:0; }
+  .selection-bar { flex-wrap:wrap; justify-content:center; max-width:90vw; }
+  .toast-container { bottom:var(--space-4); }
+}
+
 </style>
 </head>
 <body>
-<div class="container">
-<h1>⚡ SpeedTest</h1>
-<p class="subtitle">วัดความเร็วอินเทอร์เน็ตของคุณ — 100% Client-Side</p>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="logo-dot"></span>
+      <span>PK Paint</span>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav">
+      <div class="sidebar-section-title">สินค้าคงคลัง</div>
+      <div class="sidebar-item active" data-cat="all" onclick="filterByCat('all')">
+        <span class="icon">📦</span> ทั้งหมด
+        <span class="count-badge" id="catCountAll">0</span>
+      </div>
+    </nav>
+  </aside>
+  <div class="drawer-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <main class="main">
+    <nav class="navbar">
+      <button class="menu-btn" onclick="toggleSidebar()" aria-label="เปิดเมนู">☰</button>
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="search" id="searchInput" placeholder="ค้นหาสินค้า..." autocomplete="off" oninput="onSearch()">
+      </div>
+      <div class="navbar-actions">
+        <button class="btn btn-soft" onclick="openAddModal()">+ เพิ่มสินค้า</button>
+        <button class="btn btn-ghost" onclick="saveAll()">💾</button>
+        <button class="btn btn-ghost" onclick="exportCsv()">📥</button>
+      </div>
+    </nav>
+    <div class="toolbar">
+      <div class="results-count" id="resultsCount">336 รายการ</div>
+      <div class="filters">
+        <select id="statusFilter" class="filter-select" onchange="render()" aria-label="กรองตามสถานะ">
+          <option value="all">สถานะทั้งหมด</option>
+          <option value="in">มีสต็อก</option>
+          <option value="low">ใกล้หมด</option>
+          <option value="out">หมด</option>
+        </select>
+        <select id="brandFilter" class="filter-select" onchange="render()" aria-label="กรองตามแบรนด์">
+          <option value="all">แบรนด์ทั้งหมด</option>
+        </select>
+      </div>
+    </div>
+    <div class="stats-bar" id="statsBar">
+      <div class="stat-card" data-status="total" onclick="filterByCat('all')">
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">รวมทั้งหมด</div>
+      </div>
+      <div class="stat-card" data-status="in" onclick="filterByStatus('in')">
+        <div class="stat-value" id="statIn">0</div>
+        <div class="stat-label">มีสต็อก</div>
+      </div>
+      <div class="stat-card" data-status="low" onclick="filterByStatus('low')">
+        <div class="stat-value" id="statLow">0</div>
+        <div class="stat-label">ใกล้หมด</div>
+      </div>
+      <div class="stat-card" data-status="out" onclick="filterByStatus('out')">
+        <div class="stat-value" id="statOut">0</div>
+        <div class="stat-label">หมด</div>
+      </div>
+    </div>
+    <div class="table-wrap" id="tableWrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:40px"><input type="checkbox" id="selectAll" onchange="toggleAll()" aria-label="เลือกทั้งหมด"></th>
+            <th style="width:44px"></th>
+            <th class="sortable" onclick="sortBy('name')" data-sort="name">ชื่อสินค้า <span class="sort-icon" id="sortIconName">↕</span></th>
+            <th class="sortable" onclick="sortBy('code')" data-sort="code">รหัส <span class="sort-icon" id="sortIconCode">↕</span></th>
+            <th>หมวดหมู่</th>
+            <th style="width:100px">ชิ้น</th>
+            <th style="width:80px">กล่อง</th>
+            <th style="width:100px">ชิ้น/กล่อง</th>
+            <th style="width:80px">คงเหลือ</th>
+            <th style="width:60px"></th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none">
+        <div class="empty-icon">📦</div>
+        <h3>ไม่พบสินค้า</h3>
+        <p>ลองเปลี่ยนคำค้นหาหรือเพิ่มสินค้าใหม่</p>
+      </div>
+    </div>
+  </main>
+</div>
+<div class="selection-bar" id="selectionBar">
+  <span id="selectionCount">เลือก 0 รายการ</span>
+  <div class="sel-actions">
+    <button onclick="batchAddPcs()">+1 ชิ้น</button>
+    <button onclick="batchAddBox()">+1 กล่อง</button>
+    <button onclick="batchExport()">ส่งออก</button>
+    <button onclick="batchDelete()" style="color:#fca5a5">ลบ</button>
+  </div>
+  <button class="sel-close" onclick="clearSelection()">✕</button>
+</div>
+<div class="toast-container" id="toastContainer"></div>
+<div class="modal-overlay" id="addModal">
+  <div class="modal-box">
+    <h2>เพิ่มสินค้าใหม่</h2>
+    <div class="field"><label>ชื่อสินค้า</label><input id="addName" placeholder="ชื่อสินค้า"></div>
+    <div class="field"><label>รหัสสินค้า</label><input id="addCode" placeholder="รหัส"></div>
+    <div class="field"><label>รูปภาพ URL</label><input id="addImg" placeholder="https://..."></div>
+    <div class="field"><label>ต้นทุน</label><input id="addCost" type="number" placeholder="0"></div>
+    <div class="field-row" style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)">
+      <div class="field"><label>ชิ้นเริ่มต้น</label><input id="addPcs" type="number" value="0"></div>
+      <div class="field"><label>กล่องเริ่มต้น</label><input id="addBox" type="number" value="0"></div>
+    </div>
+    <div class="field"><label>จำนวนต่อกล่อง</label><input id="addPpb" type="number" value="1"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeAddModal()">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="submitAdd()">เพิ่มสินค้า</button>
+    </div>
+  </div>
+</div>
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <h2 id="drawerTitle">สินค้า</h2>
+    <button class="btn btn-ghost btn-sm" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+  <div class="drawer-footer">
+    <button class="btn btn-ghost btn-sm" onclick="saveDrawer()">บันทึก</button>
+    <button class="btn btn-ghost btn-sm" onclick="closeDrawer()">ปิด</button>
+  </div>
+</div>
+<div class="drawer-overlay" id="sheetOverlay" onclick="closeSheet()"></div>
+<div class="bottomsheet" id="bottomsheet">
+  <div class="handle"></div>
+  <div class="bottomsheet-header">
+    <h3>เพิ่มสินค้า</h3>
+    <button class="btn btn-ghost btn-sm" onclick="closeSheet()">✕</button>
+  </div>
+  <div class="bottomsheet-body" id="sheetBody"></div>
+</div>
 
-<div class="gauge-wrap">
-<svg class="gauge-svg" viewBox="0 0 200 200">
-<defs>
-<linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-<stop offset="0%" stop-color="#7c3aed"/>
-<stop offset="50%" stop-color="#00d4ff"/>
-<stop offset="100%" stop-color="#10b981"/>
-</linearGradient>
-</defs>
-<circle class="gauge-bg" cx="100" cy="100" r="90" stroke-dasharray="424.12" stroke-dashoffset="0" pathLength="360"/>
-<circle class="gauge-fill" id="gaugeFill" cx="100" cy="100" r="90"/>
-</svg>
-<div class="gauge-center">
-<div class="gauge-value" id="gaugeValue">0</div>
-<div class="gauge-unit" id="gaugeUnit">Mbps</div>
-<div class="gauge-label" id="gaugeLabel">พร้อมทดสอบ</div>
-</div>
-</div>
-
-<button class="btn-start" id="btnStart" onclick="startTest()">
-<span class="spinner"></span>
-<span id="btnText">START SPEEDTEST</span>
-</button>
-
-<div class="progress-bar" id="progressBar"><div class="progress-fill" id="progressFill"></div></div>
-<div class="status" id="status"></div>
-
-<div class="results" id="results">
-<div class="result-card ping">
-<div class="result-icon">📡</div>
-<div><div class="result-label">Ping</div><div class="result-value" id="resPing">—</div><div class="result-unit">ms</div></div>
-</div>
-<div class="result-card down">
-<div class="result-icon">⬇️</div>
-<div><div class="result-label">Download</div><div class="result-value" id="resDown">—</div><div class="result-unit">Mbps</div></div>
-</div>
-<div class="result-card up">
-<div class="result-icon">⬆️</div>
-<div><div class="result-label">Upload</div><div class="result-value" id="resUp">—</div><div class="result-unit">Mbps</div></div>
-</div>
-</div>
-
-<div class="server-info">🌐 Server: Cloudflare CDN & httpbin.org | Cache-Busting: Active</div>
-</div>
-
+<script>var PRODUCTS_DATA = [{"id": 1, "code": "58159603887", "name": "สีแลคเกอร์อุตสาหกรรม NAKOYA INDUSTRIAL LACQUER 902 สีดำ", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mo7sm1pbhkawa5", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 2, "code": "58059591975", "name": "ผ้าเหนียวเช็ดฝุ่น BBP TACKCLOTH เกรดพรีเมียม ป้องกันไฟฟ้าสถิต (Long-Lasting Antistatic)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mp3g4b21aebkc9", "cost": 0, "cat": "consumable", "catName": "วัสดุสิ้นเปลือง", "tagColor": "#3b82f6"}, {"id": 3, "code": "58059467983", "name": "สีรองพื้นอีพ็อกซี่ BICBEN สีเขียวชุดเล็ก", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mo3iq4pab5s82f", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 4, "code": "58011295475", "name": "สีแต้มรถยนต์ มิตซูบิชิ มิราจ / แอททราจ Mirage Attrage | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259n-mqlspzk6tibz4b", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 5, "code": "57961262969", "name": "สีแต้มรถยนต์ โตโยต้า อินโนวา Innova Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258m-mqlspzjwpp8vb8", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 6, "code": "57959620665", "name": "กระดาษทรายจาน 3M GOLD P80 MT", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mo7zzazchs045c", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 7, "code": "57810479056", "name": "Leyland Auto Spray Touch-Up สีสเปรย์เลย์แลนด์ พ่นรถยนต์ รถมอเตอร์ไซค์ รหัส L-06 Sky Blue (สีฟ้า)", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-moneyueoao0f64", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 8, "code": "57759601732", "name": "กาพ่นสี STAR น้ำเงิน 1.4", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mnkybyznfsarf9", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 9, "code": "57759480918", "name": "แป้นขัดสีรถยนต์ตีนตุ๊กแก 7 นิ้ว SOLAR รุ่น LK-DY3 (เกลียว M16 และ 5/8\")", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mp3e7t3hqhhcf2", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 10, "code": "57709468771", "name": "ยาขัด 3M No.1 ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-mo3keluku39gdc", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 11, "code": "57661258720", "name": "สีแต้มรถยนต์ เอ็มจี MG4 | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825ab-mqlsq0cisttt9c", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 12, "code": "57659476188", "name": "หน้ากากครึ่งหน้า 3M 7502 ชนิดไส้กรองคู่ ขนาดกลาง (Size M) ผลิตจากซิลิโคน", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mo97e2o7dix008", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 13, "code": "57609472009", "name": "ลูกขัดลอกสีและสนิม 3M Scotch-Brite Clean & Strip XT Pro (เกลียว M16 / 5/8\"-11 UNC)", "img": "https://cf.shopee.co.th/file/th-11134207-81zth-mp3dsozaulu5b1", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 14, "code": "57510551169", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สีเงิน (รหัส 3315) ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztm-mo9ec0oar5sf00", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 15, "code": "57411269237", "name": "สีแต้มรถยนต์ นิสสันซิลฟี่ Sylphy Nissan | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-82590-mqlsq0l67g8x85", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 16, "code": "57311702554", "name": "แป้นขัดกระดาษทรายตีนตุ๊กแก 5 นิ้ว HAMMER รุ่น SPAD5 (24 รู / เกลียว 5/16\")", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mp3bw2tor0ngb7", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 17, "code": "57311694211", "name": "🛡️ น้ำยากันหลุม บิ๊กเบน BIG BEN ANTI SILICONE (รหัส 17-8008) ขนาด 0.85 กิโลกรัม", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mp35pia58j6713", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 18, "code": "57309606384", "name": "สีอุตสาหกรรม SHOPPER สีน้ำเงิน 32-1015", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mo7tke69aqyo54", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 19, "code": "57161689749", "name": "[ชุดใหญ่] แลกเกอร์ 2K nax PREMILA 9600 Clear Extra Solid 2:1 พร้อมตัวเร่ง 210 Hardener", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mp33ey4fsmj1d1", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 20, "code": "57059589589", "name": "กระดาษกาว INTER แถว ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-modicdarnn65c9", "cost": 0, "cat": "tape", "catName": "เทป", "tagColor": "#6366f1"}, {"id": 21, "code": "56960538976", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สี 3325 ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo9gaxexrqj23c", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 22, "code": "56909464503", "name": "แลคเกอร์ HIT 2K ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mo3nwksunsw455", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 23, "code": "56859592109", "name": "มีดโป๊วพลาสติก คุณภาพดี", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-mnkw1i1rnxfq50", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 24, "code": "56814906299", "name": "PK PAINT ทินเนอร์อะคริลิค 009-ACL สำหรับงานพ่นสีรถยนต์ ขนาด 3 กก.", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mr5mdymrdeyve2", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 25, "code": "56810481417", "name": "VINCO AUTO UNDER COAT น้ำยาพ่นใต้ท้องรถ กันสนิม ลดเสียงสะท้อน", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mo7yp5xdbeo6b2", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 26, "code": "56809454702", "name": "สีรองพื้น CROMAX LE2004", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo3ie9gui1vn14", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 27, "code": "56661276955", "name": "สีแต้มรถยนต์ มาสด้า Mazda CX-3 | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-82591-mqlsq1k853bg7d", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 28, "code": "56660774974", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สีขาว (รหัส 3300) ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mof4wq7sy3uz39", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 29, "code": "56659596306", "name": "ผ้าสำลี สีขาว คุณภาพดี", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mnkx4yqy874267", "cost": 0, "cat": "consumable", "catName": "วัสดุสิ้นเปลือง", "tagColor": "#3b82f6"}, {"id": 30, "code": "56659469434", "name": "น้ำยาเคลือบแก้ว DINCO", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mo94h8vpatc2cc", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 31, "code": "56609458455", "name": "สีรองพื้น CROMAX LE2001", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mo3ihjxh2h3ccc", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 32, "code": "56561286586", "name": "สีแต้มรถยนต์ ฮอนด้า BR-V Honda | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258g-mqlsq20yl3pp3a", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 33, "code": "56511081289", "name": "🛠️ ปืนพ่นสี แฮมเมอร์ HAMMER W101-HP รุ่นโปร ขนาด 1.3 mm. (Industrial Grade)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mongc8usatj62c", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 34, "code": "56459470752", "name": "แลคเกอร์ KURUMA 2K ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo3ntbngpnnqad", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 35, "code": "56411269709", "name": "สีแต้มรถยนต์ มาสด้า Mazda BT50 | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259f-mqlsq23ux69s87", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 36, "code": "56411268581", "name": "สีแต้มรถยนต์ เอ็มจี MG ES | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825bd-mqlsq27xcvm31e", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 37, "code": "56409480868", "name": "ใบขัดขนแกะ 3M ขาว ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mojchc202ghs68", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 38, "code": "56260463401", "name": "TOA กระดาษทรายน้ำ TDCC 3000 รุ่น CC-Cw กระดาษทรายขัดสี งานละเอียด ผิวเรียบ เนียน ขัดน้ำได้", "img": "https://cf.shopee.co.th/file/th-11134207-81zth-mo7qjis96cxube", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 39, "code": "56259599144", "name": "สีแลคเกอร์อุตสาหกรรม NAKOYA INDUSTRIAL LACQUER 919 สีซิลเวอร์", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mo7sifnwov7k5f", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 40, "code": "56209609663", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 280 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mo7rct5qvu2rda", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 41, "code": "56110547209", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สีเหลืองแท๊กซี่ ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mo9enw5svk7h86", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 42, "code": "56061283737", "name": "สีแต้มรถยนต์ โตโยต้าครอส Cross Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258n-mqlsq2xcgglo68", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 43, "code": "56059589160", "name": "ฝาครอบกรองเหลี่ยม 3M 501", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mnktx7g6wr9f3c", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 44, "code": "55961295221", "name": "สีแต้มรถยนต์ โตโยต้า รีโว่ Hilux Revo Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825ar-mqlsq35e4n4c49", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 45, "code": "55960770654", "name": "PK PAINT ทินเนอร์ AAA สำหรับสีรถยนต์ (Automotive Thinner) เกรดพรีเมียม รหัส 009-AAA ขนาดแกลลอน", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-moeu9s2pjpcdb9", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 46, "code": "55960722874", "name": "BIC BEN ทินเนอร์ 2K บิ๊กเบน สูตรแห้งช้า รหัส 86-120 (2K Automotive Thinner Slow Drying) ขนาด 0.90 kg.", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-modur6yvnbbgad", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 47, "code": "55959596205", "name": "แปรงทาสี 1.5นิ้ว คุณภาพดี พร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/sg-11134201-8259g-mqm33tfcboct1b", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 48, "code": "55911268485", "name": "สีแต้มรถยนต์ เอ็มจี MG VS | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259f-mqlsq3ebd8ng67", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 49, "code": "55909610024", "name": "ผลิตภัณฑ์ครีมขัดเคลือบเงาลบรอย BIC BEN รหัส 900-1000/0.5 ครีมขัด BB", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mo964tlf0f7p8e", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 50, "code": "55860547554", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สีเขียวแท็กซี่ ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mo9f7ii53hfzd3", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 51, "code": "55811291424", "name": "สีแต้มรถยนต์ ฮอนด้าแจ๊ซ Jazz Honda | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-82587-mqlsq3r2xde356", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 52, "code": "55811277766", "name": "สีแต้มรถยนต์ ฮอนด้า แอคคอร์ด Accord Honda | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259q-mqlsq3whbg9baf", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 53, "code": "55763217866", "name": "กระดาษทรายน้ำ 3M รุ่น 234Q Wetordry™ เบอร์ 1500", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mq5lkdwzezv33a", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 54, "code": "55760542659", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สีแดง Taxi Red (รหัส TX-9943) ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mo9edflvf9cf5a", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 55, "code": "55759592369", "name": "เทปกระดาษกาวพ่นสี KURUMA (KURUMA Masking Tape)", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-modhj694vs3yc9", "cost": 0, "cat": "tape", "catName": "เทป", "tagColor": "#6366f1"}, {"id": 56, "code": "55660881233", "name": "TOP น้ำยาลอกสี PAINT REMOVER ALL-PURPOSE (ชนิดกระป๋อง)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mohpditx1tdta1", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 57, "code": "55609467639", "name": "สีรองพื้น NASON 4210-02", "img": "https://cf.shopee.co.th/file/th-11134207-81zth-mo3iwh806rcz85", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 58, "code": "55561323815", "name": "สีแต้มรถยนต์ Isuzu D'MAX | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825aa-mqlsq4d91te45f", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 59, "code": "55561274383", "name": "สีแต้มรถยนต์ มาสด้า Mazda CX-8 | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825b5-mqlsq4heevbj65", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 60, "code": "55559600881", "name": "ฟองน้ำรองขัด อุปกรณ์เสริม", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mnkw80o0gdfp3f", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 61, "code": "55559469064", "name": "ยาขัด 2K D-TWO แกลลอน", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mo3k9x1tqf456a", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 62, "code": "55459462413", "name": "สีโป๊วแดง BBP ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mo6ntqh694ar7c", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 63, "code": "55410467995", "name": "TOA กระดาษทรายน้ำ TDCC 800 รุ่น CC-Cw กระดาษทรายขัดสี งานละเอียด ผิวเรียบ เนียน ขัดน้ำได้", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mo7qdxrhkow4ae", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 64, "code": "55409607933", "name": "สีพ่นรถยนต์ RGB BASE COAT TOYOTA 1CO SILVER MET. สีเงินเมทัลลิก", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mo7zessfemfc8a", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 65, "code": "55160885677", "name": "Glasurit 1109-1240-4 น้ำยาพ่นกันสนิมและกันกระแทกใต้ท้องรถ สีดำ (Black)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mohpe3s4m9zd57", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 66, "code": "55111292265", "name": "สีแต้มรถยนต์ โตโยต้าเวลอส Veloz Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259g-mqlsq525jdhc7d", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 67, "code": "55109610181", "name": "สีแลคเกอร์อุตสาหกรรม NAKOYA INDUSTRIAL LACQUER 901 สีขาว", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mo7s931v203m39", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 68, "code": "55059601223", "name": "กาวอุดตะเข็บ 3M ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mnkwzdda3ymbfb", "cost": 0, "cat": "other", "catName": "อื่นๆ", "tagColor": "#64748b"}, {"id": 69, "code": "55010881301", "name": "RGB colour 2K Automotive Polyurethane Hardener (รหัส 21-33)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mohpccax75ds34", "cost": 0, "cat": "hardener", "catName": "ฮาร์ดเดนเนอร์", "tagColor": "#ef4444"}, {"id": 70, "code": "55010707532", "name": "สีโป๊วเหลือง BBP เบอร์ 6200 แบรนด์ BIC BEN (จำหน่ายแบบยกลัง)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-modj46lv3rbj55", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 71, "code": "55009472204", "name": "แป้นรองกระดาษทราย TATENO", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mnh08qiggjr407", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 72, "code": "55009470507", "name": "แลคเกอร์ FORTUNE ชุดเล็ก", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mo3nyqji7ls5c8", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 73, "code": "54959458885", "name": "สีรองพื้นอีพ็อกซี่ BICBEN สีดำชุดใหญ่", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mo3im6fdllab68", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 74, "code": "54911258694", "name": "สีแต้มรถยนต์ นิสสัน ลิวิน่า Livina Nissan | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258d-mqlsq5m4q51q6d", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 75, "code": "54909463817", "name": "สีรองพื้นเทา RGB ขนาด 3.9 KGS.", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-momrp5gg06bw60", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 76, "code": "54859601855", "name": "กาพ่นสี TATENO ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mnkynpto2txhb3", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 77, "code": "54359593146", "name": "แอร์บรัช STAR ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/sg-11134201-823ow-mp2izgaix34d06", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 78, "code": "54311263084", "name": "สีแต้มรถยนต์ ฟอร์ดเอเวอเรสต์ Everest Ford | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825at-mqlsq5vlwiry86", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 79, "code": "54260284735", "name": "PK Paint Crystal Clear 2K Automotive Polyurethane Lacquer 4:1 แล็คเกอร์พ่นรถยนต์คุณภาพสูง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo3ogezi4r2g37", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 80, "code": "54161264775", "name": "สีแต้มรถยนต์ มาสด้า Mazda CX-30 | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825ay-mqlsq67lvk0f14", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 81, "code": "54160495056", "name": "Leyland Auto Spray Touch-Up C-75 Clear Acrylic Auto Lacquer Hi Gloss", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-moneupd56bcyd4", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 82, "code": "54159601577", "name": "กาพ่นสี STAR 0.13 ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mnkxvo80lzpfdd", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 83, "code": "54159472282", "name": "หน้ากาก 3M 6200 ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mnh0lv3idfyd9c", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 84, "code": "54109470039", "name": "สีโคลทาร์อีพ็อกซี่ BBP ชุดเล็ก", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mo3j7t86esxte2", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 85, "code": "53961221376", "name": "สีแต้มรถยนต์ มิตซูบิชิ Xpander Mitsubishi | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825b2-mqlsq6jkvh1p35", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 86, "code": "53959470092", "name": "สีรองพื้นอีพ็อกซี่ BICBEN สีเทาชุดใหญ่", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mo3inlo2d43pc5", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 87, "code": "53959468275", "name": "วอชไพร์เซอร์ LEYLAND ชุดเล็ก", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo3j4m7w9urq6d", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 88, "code": "53910767148", "name": "AICA อะคริลิค แลคเกอร์ ทินเนอร์ (Acrylic Lacquer Thinner) รหัส 3602 S ขนาดปี๊บ", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-moevbqo2mgow74", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 89, "code": "53861275107", "name": "สีแต้มรถยนต์ กระบะเอ็มจี MG Extender | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258i-mqlsq6tlprf1db", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 90, "code": "53709454825", "name": "สีรองพื้น 2K BICBEN ชุดใหญ่", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mo3isdbrebd1d4", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 91, "code": "53660881233", "name": "INNOVA 2K HIGH SOLID Hardener 2:1 (รหัส 21-07)", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mohpcx12nxmz94", "cost": 0, "cat": "hardener", "catName": "ฮาร์ดเดนเนอร์", "tagColor": "#ef4444"}, {"id": 92, "code": "53611696244", "name": "[ชุดสีเทา] สีรองพื้น 2K BBP PRIMER 4:1 (รหัส 80-0047) พร้อมตัวเร่ง Hardener 21-47", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mp33bbxbhkb22b", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 93, "code": "53559605247", "name": "แปรงทาสี 1นิ้ว คุณภาพดี สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mp3ezcpuueq342", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 94, "code": "53510551817", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สี Y-1/1 ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-mo9fvvbsuf4cb8", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 95, "code": "53459480155", "name": "ยาขัด L-3000 ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mo3k17ogw6bkf8", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 96, "code": "53361141504", "name": "สีโป๊วละเอียด 1K เอชบี บอดี้ HB BODY Pro Series F980 1K Fine Filler (สีเขียว)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo3nd5w3ny802c", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 97, "code": "53259591318", "name": "ตลับกรองเคมี CA-104 ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mnku0bke2fba09", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 98, "code": "53211283618", "name": "สีแต้มรถยนต์ โตโยต้า อแวนซ่า Avanza Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mqya1144nbwmbc", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 99, "code": "53159459829", "name": "ยาขัด 3M No.1 แกลลอน", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mo3kfb4mmqyrfc", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 100, "code": "53111292490", "name": "สีแต้มรถยนต์ โตโยต้า วีออส Vios Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mqy9urnt416vdf", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 101, "code": "52909592912", "name": "กาพ่นสี STAR ทอง 1.4", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mnky45x3q7lvd4", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 102, "code": "52859611844", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 1500 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mo7r5k0knrpec9", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 103, "code": "52811286251", "name": "สีแต้มรถยนต์ ฮอนด้า CR-V Honda | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825a2-mqlsq7seabr4f7", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 104, "code": "52809472036", "name": "ลูกขัดลอกสี/สนิม 4 นิ้ว สก็อตช์-ไบรต์ Scotch-Brite 3M เอ็กซ์ ที โปร (XT Pro) แถมฟรีแกนเหล็ก 1/4\"", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mp3bedf0l81t3d", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 105, "code": "52809468931", "name": "ยาขัด 3M Finesse-it ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mo3kfscgxekh77", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 106, "code": "52761267789", "name": "สีแต้มรถยนต์ นิสสันจู๊ค Juke Nissan | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825a9-mqlsq8b3s8ap4c", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 107, "code": "52759611716", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 150 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-mo7r2lzjaz9kbc", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 108, "code": "52610538562", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สีเขียวแท็กซี่สุวรรณภูมิ 2 ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mo9emqqzzg97a9", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 109, "code": "52609458531", "name": "สีรองพื้น CROMAX 840R", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mo3i7sdr4iyo86", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 110, "code": "52562770303", "name": "HAMMER 5615 เทปตีเส้นงานพ่นสี 13มม. x 33ม. ลอกไม่ทิ้งคราบ ทนร้อน 150°C", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mpvmfsr3txxq66", "cost": 0, "cat": "tape", "catName": "เทป", "tagColor": "#6366f1"}, {"id": 111, "code": "52509459034", "name": "วอชไพร์เซอร์ LEYLAND ชุดใหญ่", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mo3j5ysmqha8e9", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 112, "code": "52461712616", "name": "ดินน้ำมันลบคราบสกปรกฝังแน่น HAMMER รุ่น 9970 ขนาด 200 กรัม (Fine Grade)", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mp3fgnl08kxs5b", "cost": 0, "cat": "other", "catName": "อื่นๆ", "tagColor": "#64748b"}, {"id": 113, "code": "52411283999", "name": "สีแต้มรถยนต์ มิตซูบิชิ Outlander Mitsubishi | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8257u-mqlsq8pr2ux9b0", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 114, "code": "52309595104", "name": "แผ่นกรองหน้ากาก 3M กลม", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mnktngi50t1gf8", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 115, "code": "52260766833", "name": "BIG BEN น้ำยาเช็ดคราบสกปรก (Degreaser Wiping Solvent) ชนิดแห้งเร็ว รหัส 85-7", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-moeujh3i46iz9d", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 116, "code": "52209469103", "name": "ยาขัด i-SOLAR ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-mo3k8of3gv0icb", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 117, "code": "52161700747", "name": "⚡ น้ำยาเร่งแห้ง บิ๊กเบน BIG BEN ACCELERATOR 2% (รหัส 17-8007) ขนาด 0.25 กิโลกรัม", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mp35f9gzbvnz59", "cost": 0, "cat": "hardener", "catName": "ฮาร์ดเดนเนอร์", "tagColor": "#ef4444"}, {"id": 118, "code": "52109616025", "name": "กระดาษทรายจาน 3M GOLD P400 MT", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mo7zx03nfym87b", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 119, "code": "52060786473", "name": "สีอุตสาหกรรม SHOPPER สีดำเงา 32-0002", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mof611fe0ff02c", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 120, "code": "52059609673", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 1000 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mo7qzum58mboc0", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 121, "code": "52059459933", "name": "ยาขัด Solar ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mo3kcbrb04xv63", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 122, "code": "52009470884", "name": "แลคเกอร์ BBP SUPER CLEAR", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-mo3nraesqr5yf7", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 123, "code": "51959600889", "name": "มีดโป๊ว 6นิ้ว คุณภาพดีพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mp3gg4f666fg73", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 124, "code": "51909584834", "name": "ตลับกรองเคมี 3M เหลี่ยม", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mnktg9w4en0l9f", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 125, "code": "51859595389", "name": "แผ่นกรองหน้ากาก CA-104", "img": "https://cf.shopee.co.th/file/th-11134207-81ztm-mnkuakpr4kjn6b", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 126, "code": "51810479263", "name": "Leyland Auto Spray Touch-Up P-4 Yamaha", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-monexzapep7030", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 127, "code": "51763100814", "name": "ทินเนอร์อะคริลิก PK PAINT รุ่น 009-ACL (Acrylic Automotive Thinner) เกรดพรีเมียม 12KG ปิ๊ป", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mq325z5q72tr86", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 128, "code": "51661289262", "name": "สีแต้มรถยนต์ มิตซูบิชิ แลนเซอร์ Lancer EX Mitsubishi | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-82581-mqlsq9rf8rgudd", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 129, "code": "51661282518", "name": "สีแต้มรถยนต์ ฮอนด้าซิตี้ City Honda | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825a5-mqlsq9v8fimj0c", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 130, "code": "51511295143", "name": "สีแต้มรถยนต์ โตโยต้า อัลติส Altis Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825a2-mqlsq9w6dma5f3", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 131, "code": "51509471331", "name": "ยาขัด Nexus D-800 ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mo3k6q4f18g44f", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 132, "code": "51460770598", "name": "AICA ทินเนอร์ เกรด AAA 100% (Super Thinner) ขนาด 3KG", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-moeu5pxob7rf46", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 133, "code": "51460483565", "name": "Leyland Auto Spray Touch-Up L-12 Ivory", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-monex6r01k3m8f", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 134, "code": "51359469047", "name": "ยาขัด 3M CREAM WAX ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mo3kifof5beo0b", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 135, "code": "51161234802", "name": "สีแต้มรถยนต์ อีซูซุ MU-X Isuzu | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258q-mqlsqaf8edjha6", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 136, "code": "51159459410", "name": "แลคเกอร์ 2:1 NASON 499-00", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mo3nxgjpyww8e0", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 137, "code": "51061282600", "name": "สีแต้มรถยนต์ ฮอนด้าบริโอ้ Brio Honda | PK PAINT", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-mqlt3b884ttuc7", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 138, "code": "51059446534", "name": "PK PAINT แลคเกอร์มุกประกายพิเศษ 2K 4:1 / 2K 2:1", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mng0liyfohz9de", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 139, "code": "51010542517", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สีเขียว (รหัส 3377) ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mo9e7ev6hwcse8", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 140, "code": "51009606335", "name": "สีอุตสาหกรรม SHOPPER สีขาว 32-5001", "img": "https://cf.shopee.co.th/file/th-11134207-81ztm-mo7tcqowrx1fcc", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 141, "code": "51009466473", "name": "สีโป๊ว CROMAX 759R ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81ztm-mo6mfrab0dmq4c", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 142, "code": "50961273473", "name": "สีแต้มรถยนต์ เอ็มจี MG ZS | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825aq-mqlsqb0goxkw5a", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 143, "code": "50959593886", "name": "หัวเชื้อด้าน ยูนิเวอร์แซล 17-8002", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mo7yy2vrompv73", "cost": 0, "cat": "other", "catName": "อื่นๆ", "tagColor": "#64748b"}, {"id": 144, "code": "50911295009", "name": "สีแต้มรถยนต์ โตโยต้า รถตู้ Commuter (Hiace) Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825a2-mqlsqb7ccdn187", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 145, "code": "50860497229", "name": "Leyland Auto Spray Touch-Up L-17 Lexus Silver Original Color", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-monewzxpnuob49", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 146, "code": "50860484586", "name": "Leyland Auto Spray Touch-Up L-40 ISUZU 868E", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-monewr1wdgct80", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 147, "code": "50811276107", "name": "สีแต้มรถยนต์ นิสสันนาวาร่า Navara Nissan | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-82591-mqlsqbghupzg45", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 148, "code": "50810758296", "name": "PK PAINT ทินเนอร์ 2K ชนิดแห้งช้า (Slow Drying) รุ่น Special Edition รหัส 009-999 ขนาดปี๊บ", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-moetzuck77yj5e", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 149, "code": "50659459653", "name": "แลคเกอร์ 2K 4:1 NASON 490-00", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mpvly05n9n2k55", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 150, "code": "50609596793", "name": "กาพ่นสี STAR ทอง 1.3", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mnky45x3q7lvd4", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 151, "code": "50561278407", "name": "สีแต้มรถยนต์ นิสสัน อัลเมร่า Almera Nissan | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259l-mqlsqbvtf1tt57", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 152, "code": "50560772066", "name": "SUMO ทินเนอร์ 100% เกรด AAA (Super Thinner) ขนาดปี๊บ 12 กก.", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-moev8aeb3jep30", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 153, "code": "50559464886", "name": "ยาขัด 2K D-TWO ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mo3kd25do83p06", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 154, "code": "50509593038", "name": "ตัวดักน้ำ คุณภาพดี สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-monhwrjqce0ya6", "cost": 0, "cat": "other", "catName": "อื่นๆ", "tagColor": "#64748b"}, {"id": 155, "code": "50509454927", "name": "สีรองพื้น 2K RGB ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mo3irka4h0cm1b", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 156, "code": "50459592808", "name": "กาพ่นสี TATENO 1.3 ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-momsk1391wjxd9", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 157, "code": "50411263705", "name": "สีแต้มรถยนต์ เอ็มจี MG5 | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259d-mqlsqc8k4bnk89", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 158, "code": "50409592659", "name": "กาพ่นสี STAR 1.3 ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-momshkqs0bv0d6", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 159, "code": "50364225637", "name": "ชุดแลคเกอร์เคลือบเงา Nippon Paint Nax Premila 9600HP Velocity Clear 2K 2:1 พร้อมฮาร์ดเดนเนอร์ 960HP", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mqslyasjl3ibc6", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 160, "code": "50359611862", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 1200 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mo7qw3rb6ghs6e", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 161, "code": "50313256521", "name": "ชุดแลคเกอร์เคลือบเงา Cromax CC6400 พร้อมฮาร์ดเดนเนอร์ตัวเร่งช้า XK206 (มาตรฐาน Axalta)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mq63iob726f6aa", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 162, "code": "50309470560", "name": "แลคเกอร์ RGB ชุดเล็ก", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo3nsiu2wv7mc7", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 163, "code": "50261280676", "name": "สีแต้มรถยนต์ นิสสันเทียน่า Teana Nissan | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258e-mqlsqclv5c7hbe", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 164, "code": "50210492137", "name": "Leyland Auto Spray Touch-Up L-18 Maroon", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-monexhi2b4zm03", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 165, "code": "50160775724", "name": "BIG BEN ทินเนอร์ 2K ชนิดแห้งช้า (Slow Drying) รหัส 86-120L ขนาดใหญ่", "img": "https://cf.shopee.co.th/file/th-11134207-81ztm-moeuhvv39xc057", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 166, "code": "50111283951", "name": "สีแต้มรถยนต์ โตโยต้า ฟอร์จูนเนอร์ Fortuner Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259q-mqlsqcvs60i4e8", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 167, "code": "50061720237", "name": "ลูกยางขัดลอกสติกเกอร์และคราบกาว HAMMER รุ่น 9988 ขนาด 3.5 นิ้ว (ไม่ทำลายพื้นผิว)", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mp3cwgf00lc126", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 168, "code": "50061286026", "name": "สีแต้มรถยนต์ มาสด้า Mazda 2 | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258f-mqlsqd31zb4edd", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 169, "code": "50059595193", "name": "ฝาครอบกรองกลม 3M 774", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mnktv7linz7k08", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 170, "code": "50011077711", "name": "🛠️ ปืนพ่นสี แฮมเมอร์ HAMMER W71 รุ่นเบสิค ขนาด 1.5 mm. (Elementary Grade) เกรดอุตสาหกรรม", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-monhisclb18gf9", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 171, "code": "50010881162", "name": "BBP HARDENER FOR 2K PRIMER ตัวเร่งสำหรับสีรองพื้น 2K (รหัส 21-47)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mohpe96mpn9o83", "cost": 0, "cat": "hardener", "catName": "ฮาร์ดเดนเนอร์", "tagColor": "#ef4444"}, {"id": 172, "code": "49910567203", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สีเขียวแท็กซี่สุวรรณภูมิ ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mo9elouuxzikba", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 173, "code": "49811289296", "name": "สีแต้มรถยนต์ นิสสันคิกส์ Kicks Nissan | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825as-mqlsqdhiwz64a7", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 174, "code": "49709636078", "name": "กระดาษทรายจาน 3M GOLD P240 OG", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mo80lnraggzsf9", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 175, "code": "49709495198", "name": "ยาขัด KOMAK PRO1000 ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mo3k26d3w83pa5", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 176, "code": "49559479046", "name": "รองพื้นเทา RGB ขนาด 1 KGS.", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-momrp1wf124sce", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 177, "code": "49510503696", "name": "Leyland Auto Spray Touch-Up L-02 Black", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-monew5xoeq6mfb", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 178, "code": "49509617616", "name": "สีทอง BIC BEN เกรด Royal Premium เบอร์ 5A913G สีทอง #2", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-mq45y270w74d0f", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 179, "code": "49409609718", "name": "กระดาษกาว TOKYU ขนาดแถว", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-monv8xzdbrbfaf", "cost": 0, "cat": "tape", "catName": "เทป", "tagColor": "#6366f1"}, {"id": 180, "code": "49313135374", "name": "สเปรย์แลคเกอร์ 2K 4:1 / 2K 2:1 | PK Paint", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-mq375bl829e55c", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 181, "code": "49309490318", "name": "ชุดแลคเกอร์ GLASURIT 923-255", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mohqb9bbdnnw43", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 182, "code": "49259490517", "name": "แลคเกอร์ CROMAX 1200S", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mo3o0u60o9vq0d", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 183, "code": "49109488637", "name": "แลคเกอร์ด้าน NOKOYA ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mo3nufbwu1om71", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 184, "code": "49060910765", "name": "RGB colour 2K Automotive Polyurethane Hardener (รหัส 21-33) สูตรแห้งเร็ว", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-mohpeor03soxa8", "cost": 0, "cat": "hardener", "catName": "ฮาร์ดเดนเนอร์", "tagColor": "#ef4444"}, {"id": 185, "code": "49011540806", "name": "กระดาษทรายกลม 3M GOLD P100 OG", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-moz2192jmex7af", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 186, "code": "49011315056", "name": "สีแต้มรถยนต์ โตโยต้า อัลพาร์ด รถตู้ Alphard Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825a0-mqlsqei2jh8r2b", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 187, "code": "48910508729", "name": "Leyland Auto Spray Touch-Up R2000 Plastic Primer", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-moneuhemklj49c", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 188, "code": "48909632630", "name": "กระดาษทรายจาน 3M 255P P600 SE1", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-mo80n7izsikmb5", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 189, "code": "48861718486", "name": "[ชุดแกลลอน] แลกเกอร์ 2K peter NEXT Premium Clear 2:1 รุ่น CN-7800 พร้อมตัวเร่ง HN-7800", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mp33h8i0qakt4b", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 190, "code": "48860795888", "name": "Glasurit (ตรานกแก้ว) ทินเนอร์แห้งช้า 352-216 (Reducer Slow) ขนาด 5 ลิตร", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-moeuqkyk1amj89", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 191, "code": "48811312363", "name": "สีแต้มรถยนต์ โตโยต้า มาเจสตี้ Majesty Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825aw-mqlsqesm6uww91", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 192, "code": "48760743940", "name": "PK PAINT ทินเนอร์ 2K สูตรแห้งช้าพิเศษ รหัส 009-999 (Special Edition) 2K Automotive Thinner Slow Drying", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-modv1rlcfkzwbb", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 193, "code": "48710495692", "name": "สีอุตสาหกรรม SHOPPER สีน้ำเงิน 32-1015", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-mo7tuv2evklg3c", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 194, "code": "48659492232", "name": "ฟองน้ำขัดสีรถยนต์ SOLAR Black Foam Finish รหัส #20020 (Made in Japan)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mp3bkzw7xmodf7", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 195, "code": "48659489140", "name": "ยาขัด Solar แกลลอน ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mo3kdvw1qadh96", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 196, "code": "48511292208", "name": "สีแต้มรถยนต์ เอ็มจี รถตู้ MG Maxus9 | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258j-mqlsqffufm6le7", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 197, "code": "48461296582", "name": "สีแต้มรถยนต์ นิสสัน เทอร์ร่า Terra Nissan | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825av-mqlsqf80zqby17", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 198, "code": "48460568014", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สี H-2 ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mo9fe4kfs556e4", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 199, "code": "48409500778", "name": "กระดาษทรายซ้อน 3M ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mngztwuc2scha5", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 200, "code": "48361305826", "name": "สีแต้มรถยนต์ มาสด้า Mazda CX-5 | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259v-mqlsqff6v5l888", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 201, "code": "48310450499", "name": "DINCO Poly Putty Lite สีโป๊วรถยนต์ สูตรบาง ขัดง่าย แห้งไว ขนาด 3.5 กก. (พร้อมน้ำยา สีโป๊ว Hardener)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mo6mo8x80i6ga5", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 202, "code": "48259611977", "name": "กระดาษกาว INTER ลัง ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-modi29ygqtji1e", "cost": 0, "cat": "tape", "catName": "เทป", "tagColor": "#6366f1"}, {"id": 203, "code": "47961293061", "name": "สีแต้มรถยนต์ ฟอร์ดเฟียสต้า Fiesta Ford | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259u-mqlsqfqvogea94", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 204, "code": "47860902199", "name": "Aica VANDO SILICONE OFF น้ำยาทำความสะอาดพื้นผิว", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mohpdzphf8y367", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 205, "code": "47810571110", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สีดำด้าน (รหัส 3314F) ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mo9e5zx8d8gf30", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 206, "code": "47759616662", "name": "กาพ่นสี STAR 1.5 Star", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-mq49euvgdmo083", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 207, "code": "47711308258", "name": "สีแต้มรถยนต์ ฮอนด้าซีวิค Civic Honda | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-82594-mqlsqg3bugwcd7", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 208, "code": "47710511807", "name": "Leyland Auto Spray Touch-Up P-9 Gold", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-money7ctihvm05", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 209, "code": "47709627788", "name": "สีพ่นรถยนต์ RGB 2K FINISH ISUZU PT064 WHITE สีขาว", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mo7yj3vlxr0h05", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 210, "code": "47659613768", "name": "น้ำยากันสีเป็นรู 285-202", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mnl03by5kk5hb9", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 211, "code": "47611308470", "name": "สีแต้มรถยนต์ โตโยต้าเซียนต้า Sienta Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825a3-mqlsqgeycummbf", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 212, "code": "47609474865", "name": "สีรองพื้น 2K BICBEN ชุดเล็ก", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo3ix3btbo5hdd", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 213, "code": "47513555747", "name": "แผ่นขัดลอกสีและสนิม 3M Scotch-Brite™ รุ่น Clean & Strip XT Pro (ลูกขัด เอ็กซ์ ที โปร)", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mqcunjcy1e6ab4", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 214, "code": "47511279773", "name": "สีแต้มรถยนต์ กระบะฟอร์ด Ranger Raptor Ford | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-82596-mqlsqgp1dudp9f", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 215, "code": "47510894904", "name": "NIPPON PAINT nax SILICONE OFF น้ำยาเช็ดคราบ (ขนาด 4 ลิตร)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mohpc66z83r522", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 216, "code": "47462419987", "name": "NEXA AUTOCOLOR P971-1200 ยาขัดหยาบ (Cutting Polish 1200)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mplrqfmf4b2m27", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 217, "code": "47459635618", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 100 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mo7qtzkd6fba96", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 218, "code": "47459618785", "name": "สีพ่นรถยนต์ BIC BEN 30 ไลน์ รหัส 30-5801 สีบรอนซ์หยาบ (Nitrocellulose)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mo7yw0eqou1001", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 219, "code": "47459491374", "name": "ยาขัด Nexus D-2000 ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo3k55sblxj986", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 220, "code": "47409631732", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 240 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81zth-mo7rafss48hw53", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 221, "code": "47309625934", "name": "กาพ่นสี STAR น้ำเงิน 1.5", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mnkybyznfsarf9", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 222, "code": "47260567391", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สีดำ (รหัส 3314) ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mo9djnqa17urd5", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 223, "code": "47209611749", "name": "กระดาษกาว INTER แพ็ค", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-modic628abdbac", "cost": 0, "cat": "tape", "catName": "เทป", "tagColor": "#6366f1"}, {"id": 224, "code": "47160911016", "name": "BIG BEN AUTOMOTIVE REFINISH HARDENER EPOXY (รหัส 21-17)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mohpbm7ooaocab", "cost": 0, "cat": "hardener", "catName": "ฮาร์ดเดนเนอร์", "tagColor": "#ef4444"}, {"id": 225, "code": "47160899934", "name": "CO-ROCK น้ำยาเช็ดคราบ PRE SOLVENT (รหัส 016-0080)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztm-mohpcl55my9se7", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 226, "code": "47010499674", "name": "Leyland Auto Spray Touch-Up L-01 White", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-monevkmm9z4dfb", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 227, "code": "46961320123", "name": "สีแต้มรถยนต์ โตโยต้า C-HR Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825aq-mqlsqho7q970a6", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 228, "code": "46959621135", "name": "KURUMA พลาสติกปิดพ่น ชนิดมีเทปกาวในตัว (Kuruma Pre-Taped Masking Film)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-modhlogfnbbjc1", "cost": 0, "cat": "tape", "catName": "เทป", "tagColor": "#6366f1"}, {"id": 229, "code": "46861315815", "name": "สีแต้มรถยนต์ ฮอนด้า HR-V Honda | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259b-mqlsqhruefin5a", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 230, "code": "46859482641", "name": "สีโป๊ว BODY F222 ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mondi5qrzw2354", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 231, "code": "46760906281", "name": "TOP น้ำยาลอกสี PAINT REMOVER ALL-PURPOSE (ชนิดแกลลอน)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztm-mohpcs4f0cu925", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 232, "code": "46760783156", "name": "Cromax XB387 ทินเนอร์แห้งช้า (Hi-Temp Thinner) คุณภาพสูง แบรนด์ Axalta", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-moeucena75zh04", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 233, "code": "46709609677", "name": "SCOTCH BRITE 3M ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-monhxyl60lqkc3", "cost": 0, "cat": "other", "catName": "อื่นๆ", "tagColor": "#64748b"}, {"id": 234, "code": "46611308613", "name": "สีแต้มรถยนต์ โตโยต้าคัมรี่ Camry Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259r-mqlsqibvf7rh03", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 235, "code": "46609612766", "name": "กาพ่นสี TATENO 1.5 ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztm-mq49b7eznor161", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 236, "code": "46561298233", "name": "สีแต้มรถยนต์ นิสสัน พัลซ่า Pulsar Nissan | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825an-mqlsqig1iygw26", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 237, "code": "46560972513", "name": "สีภายในรถยนต์ PK PAINT", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-momrt3farmdq98", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 238, "code": "46559490107", "name": "สีรองพื้นอีพ็อกซี่ BICBEN สีขาวชุดใหญ่", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mo3io5mzgb9g1c", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 239, "code": "46509621903", "name": "กาพ่นสี TATENO ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mnkylvktccn592", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 240, "code": "46463245731", "name": "สีโป๊วพลาสติก ตราสามศร (Three Arrows) เกรดคุณภาพสูง พร้อมน้ำยาฮาร์ดเดนเนอร์", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mq5lcodmzl70e0", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 241, "code": "46413276391", "name": "สีพ่นลายฆ้อน BL เบอร์ 816 สีฟ้า (Blue) เกรดคุณภาพสูง (Best Quality)", "img": "https://cf.shopee.co.th/file/th-11134207-81zth-mq63cffd4nb502", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 242, "code": "46409640651", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 2000 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo7rnacd5a8591", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 243, "code": "46409478681", "name": "สีรองพื้นพลาสติก NASON", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mo3ivp8sgsg363", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 244, "code": "46310910738", "name": "Glasurit ชุดเคลียร์เคลือบเงา 2K HS Multi Clear Coat (ชุดเคลียร์ 923-255 + ตัวเร่ง 929-94)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-momqom118yyo7b", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 245, "code": "46261284210", "name": "สีแต้มรถยนต์ ฟอร์ด เอคโค่สปอร์ต EcoSport Ford | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258p-mqlsqj4myzv369", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 246, "code": "46210512641", "name": "Leyland Auto Spray Touch-Up W-6 White (Hi-Temp 1200°F)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-monev85ih7v3c4", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 247, "code": "46209479421", "name": "แลคเกอร์ INNOVA ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mo3nul30r284bb", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 248, "code": "46111725480", "name": "🌀 ชุดกรองลมดักน้ำคู่ พร้อมเกจ์วัดและตัวปรับแรงดันลม (Twin Air Filter Regulator) รุ่นใหญ่ เกรดอุตสาหกรรม", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mp35cojeu9zhd4", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 249, "code": "46109501053", "name": "หน้ากากกรองเดี่ยว 3M 3200", "img": "https://cf.shopee.co.th/file/th-11134207-81zth-mo982t65t4arf2", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 250, "code": "46059645651", "name": "กระดาษทรายจานเซรามิก TERCEL CERAMIC VELCRO DISC P100", "img": "https://cf.shopee.co.th/file/th-11134207-81zth-mo80wp9zdkht63", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 251, "code": "46010791079", "name": "Cromax ทินเนอร์แห้งช้า MS Hi-Temp Thinner รหัส AB385 ขนาด 5 ลิตร", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-moev3h016g3x19", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 252, "code": "46009496121", "name": "ใบขัดขนแกะ 3M สีเหลือง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mojchw9ivvny46", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 253, "code": "45963177118", "name": "แลคเกอร์เคลือบด้าน 2K Kuruma Matt Clear 4:1 (เคลียร์ด้าน 75%)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-mq4b11hpqsjv87", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 254, "code": "45761293844", "name": "สีแต้มรถยนต์ นิสสัน เอ็กซ์เทรล X-Trail Nissan | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-82598-mqlsqjuj5v6479", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 255, "code": "45760318414", "name": "Nippon Paint NAX 2200 2K Primer Grey (3L + 0.8L) สีรองพื้นกลบตัว 2K สีเทา", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mo3olsbu9zwgd1", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 256, "code": "45759625041", "name": "มีดโป๊ว 4นิ้ว คุณภาพดี พร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mp3ghmou5szy34", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 257, "code": "45709616326", "name": "กาวอุดตะเข็บ BODY 999", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mnkx1c0su39i2d", "cost": 0, "cat": "other", "catName": "อื่นๆ", "tagColor": "#64748b"}, {"id": 258, "code": "45611292369", "name": "สีแต้มรถยนต์ เอ็มจี MG GS | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825ar-mqlsqk0cvxn2b5", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 259, "code": "45609484700", "name": "3M Perfect-It EX น้ำยาขัดสีรถยนต์ เกรดพรีเมียม ครบ 3 ขั้นตอน (PN36060 / PN06094 / PN06068) ขนาด 946 ml. ขัดหยาบ ขัดละเอี", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mo3kgp2achz9cb", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 260, "code": "45560309785", "name": "BBP 2K Primer 80-0047 สีรองพื้น 2K สีเทา อัตราส่วน 4:1 พร้อมตัวเร่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mo3onxtm5cecf5", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 261, "code": "45559640587", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 120 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mo7qqxg6emmae8", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 262, "code": "45559617312", "name": "สีอุตสาหกรรม SHOPPER สีแดง 32-4013", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mo7t6g2itedd24", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 263, "code": "45512417728", "name": "NAKOYA Industrial Lacquer สีพ่นอุตสาหกรรม (เบอร์ 913 สีส้ม ORANGE)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mplrm3y8esjl2c", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 264, "code": "45509628141", "name": "สีแลคเกอร์อุตสาหกรรม NAKOYA INDUSTRIAL LACQUER 914 สีดำด้าน", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mo7setnewk5kbe", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 265, "code": "45461302618", "name": "สีแต้มรถยนต์ มาสด้าสาม Mazda 3 | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825aj-mqlsqkmsyha9e5", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 266, "code": "45459617470", "name": "สีอุตสาหกรรม SHOPPER สีดำด้าน 33-0003", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mo7tfuchi96r5f", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 267, "code": "45459490175", "name": "สีโคลทาร์อีพ็อกซี่ BBP ชุดใหญ่", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mo3jhqfijzes59", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 268, "code": "45409627864", "name": "สีพ่นรถยนต์ BIC BEN สีน้ำเงินประกาย รหัส 56-1916 (Acrylic Basecoat)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mo7zbcpdli4mb8", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 269, "code": "45359496098", "name": "แผ่นซอฟต์รองขัดกระดาษทราย TATENO", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mnh0ddlhazns68", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 270, "code": "45261314031", "name": "สีแต้มรถยนต์ โตโยต้า ยาริส / Ativ / Cross Toyota | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258o-mqlsql67e0b094", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 271, "code": "45259626720", "name": "สีโป๊ว ROCK ของแท้ พร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mo3nb9p9l34523", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 272, "code": "45109484122", "name": "ฮาร์ดเดนเนอร์ GLASURIT 929-94", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mohqbu6lliwx29", "cost": 0, "cat": "hardener", "catName": "ฮาร์ดเดนเนอร์", "tagColor": "#ef4444"}, {"id": 273, "code": "45060910925", "name": "RGB colour 2K Automotive Polyurethane Hardener (รหัส 21-33/8) สูตรแห้งช้า", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mohpd2p2abrga7", "cost": 0, "cat": "hardener", "catName": "ฮาร์ดเดนเนอร์", "tagColor": "#ef4444"}, {"id": 274, "code": "44810512120", "name": "Leyland Auto Spray Touch-Up F-11 Fluorescent Bright Rose", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-monexqga6hhd88", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 275, "code": "44763113826", "name": "PK PAINT ทินเนอร์ AAA สำหรับสีรถยนต์ รหัส 009-AAA ขนาดปี๊บ 12KG", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mq31y1zd87bh9a", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 276, "code": "44761107058", "name": "สีรองพื้นอีพ็อกซี่ BICBEN สีเทาชุดเล็ก", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-monj6sshct8sa0", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 277, "code": "44711101608", "name": "🛠️ ปืนพ่นสี แฮมเมอร์ HAMMER W71 รุ่นเบสิค ขนาด 1.3 mm. (Elementary Grade) เกรดอุตสาหกรรม", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-monhisclb18gf9", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 278, "code": "44709612193", "name": "ยางรองขัด สีดำ คุณภาพดี พร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mnkw9jet648y03", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 279, "code": "44659629757", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 320 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mo7rf8jghmh423", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 280, "code": "44609487983", "name": "เอสไพร์เมอร์ BICBEN ชุดใหญ่", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-monjew40xmh90d", "cost": 0, "cat": "other", "catName": "อื่นๆ", "tagColor": "#64748b"}, {"id": 281, "code": "44512795453", "name": "HAMMER 5615 เทปตีเส้นงานพ่นสี 6มม. x 33ม. ลอกไม่ทิ้งคราบ ทนร้อน 150°C", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mpvmpz4swwe931", "cost": 0, "cat": "tape", "catName": "เทป", "tagColor": "#6366f1"}, {"id": 282, "code": "44430367983", "name": "จานขัดลอกสนิม ลอกสี 4.5 นิ้ว TIGERCEI POLYBRUSH รุ่นมีน็อตในตัว (Standard Black)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mp37fi7sfjep2f", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 283, "code": "44280999021", "name": "AICA ทินเนอร์อะคริลิค (ACRYLIC) รหัส 3303 ขนาดปี๊บ", "img": "https://cf.shopee.co.th/file/th-11134207-81ztm-moev2eg3kcni4e", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 284, "code": "44231457094", "name": "[สูตรเซรามิก] แลกเกอร์ Matrix Extra Hardness CERAMIC 2K Clear 2:1 (ชุด Part A + B + C)", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mp33jk1i5o9887", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 285, "code": "44230363103", "name": "เอสไพร์เมอร์ BICBEN ชุดเล็ก", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-monjbawbpma719", "cost": 0, "cat": "other", "catName": "อื่นๆ", "tagColor": "#64748b"}, {"id": 286, "code": "43930872055", "name": "Leyland Auto Spray Touch-Up L-19", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-monewgj56mfga7", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 287, "code": "43880875900", "name": "Leyland Auto Spray Touch-Up F-76 Clear Acrylic Auto Lacquer Matt Clear", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-monetrx514wb68", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 288, "code": "43851041132", "name": "สีโป๊วไฟเบอร์ HB BODY F250 – BODYFIBER", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-mo6nwh5jdqthe6", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 289, "code": "43831256984", "name": "สีแต้มรถยนต์ ฮอนด้า WR-V Honda | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825a4-mqlsqmd0unt90e", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 290, "code": "43681236346", "name": "สีแต้มรถยนต์ เอ็มจี MG HS | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8259l-mqlsqmei5dzhee", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 291, "code": "43630854160", "name": "กระดาษทรายน้ำ TOA TDCC 400 รุ่น Waterproof Abrasive Paper", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mo7rhqsttgxu01", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 292, "code": "43581987087", "name": "TATENO S890 กาพ่นสี LVLP หัว 1.3 / 1.4 มม. ถ้วยบน 600cc กินลมน้อย สำหรับงานพ่นสีรถยนต์", "img": "https://cf.shopee.co.th/file/th-11134207-81ztc-mpvtyfauliq4e4", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 293, "code": "43551166787", "name": "สีโป๊วน้ำยาชมพู เลซซอน Lezzon RE-749", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-mo6nsr6p3wg402", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 294, "code": "43380998833", "name": "AICA ทินเนอร์อะคริลิค (ACRYLIC) รหัส 3303 ขนาดแกลลอน", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-moeu1igpdlog20", "cost": 0, "cat": "chemical", "catName": "เคมีและน้ำยา", "tagColor": "#f59e0b"}, {"id": 295, "code": "43330781544", "name": "PK Paint PK-999 เคลียร์ใส 2K Crystal Clear 4:1 (Ultra Premium) พร้อมตัวเร่ง H-99", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-mo3oatd99erm39", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 296, "code": "43330363173", "name": "สีรองพื้นอีพ็อกซี่ BICBEN สีเขียวชุดใหญ่", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mo3ioutt3abl5f", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 297, "code": "43081251967", "name": "สีแต้มรถยนต์ เอ็มจี MG3 | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-82585-mqlsqmz6i7eo81", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 298, "code": "43080356538", "name": "PK PAINT สีสเปรย์พ่นรถยนต์ ม่วงแก้วพิเศษ 2K Base Coat", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-mnfu63kp5b0ma4", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 299, "code": "42881058154", "name": "BIG BEN HARDENER 2K ฮาร์ดดินเนอร์ สีรองพื้น 2K (รหัส 21-20)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mohpb1n12k97fb", "cost": 0, "cat": "hardener", "catName": "ฮาร์ดเดนเนอร์", "tagColor": "#ef4444"}, {"id": 300, "code": "42780437842", "name": "กระดาษทรายจาน 3M GOLD P150 OH", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mo7zu86fvx1cd4", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 301, "code": "42730424136", "name": "กาพ่นสี SAGOLA 3300 1.4", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mnky0kd92io823", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 302, "code": "42680371756", "name": "สีรองพื้น 2K KURUMA ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mo3iisxm9k3s08", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 303, "code": "42430872337", "name": "Leyland Auto Spray Under Coating L-61 สีดำ", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-monet76srxu5da", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 304, "code": "42381162241", "name": "🛠️ ปืนพ่นสี แฮมเมอร์ HAMMER W101-HP รุ่นโปร ขนาด 1.5 mm. (Industrial Grade)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-mongc8usatj62c", "cost": 0, "cat": "tool", "catName": "อุปกรณ์พ่นสี", "tagColor": "#06b6d4"}, {"id": 305, "code": "42376046757", "name": "PK PAINT สีสเปรย์รถยนต์ สีแดงสด 2K Base Coat", "img": "https://cf.shopee.co.th/file/th-11134207-81ztf-mgj0k9aphafe65", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 306, "code": "42180363907", "name": "ยาขัดเบาะ DINCO ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mo3jyfa219fof1", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 307, "code": "41980375446", "name": "ยาขัด Nexus D-800 แกลลอน", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo3k61eglon4be", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 308, "code": "41681266383", "name": "สีแต้มรถยนต์ มิตซูบิชิ ไทรทัน Triton Mitsubishi | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-82597-mqlsqnrdant7ee", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 309, "code": "41601166590", "name": "สีโป๊วเหลือง HIT 2K Ultra Putty", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mo6ls1i5io7446", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 310, "code": "41581062894", "name": "RGB colour ฮาร์ดดินเนอร์ สีรองพื้น 2K (HARDENER 2K PRIMER รหัส 21-41)", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-mohpbuv0stfwb9", "cost": 0, "cat": "hardener", "catName": "ฮาร์ดเดนเนอร์", "tagColor": "#ef4444"}, {"id": 311, "code": "41380375101", "name": "แลคเกอร์ FORTUNE ชุดใหญ่", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-mo3nryohjqww91", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 312, "code": "41330428876", "name": "สีพ่นรถยนต์ BIC BEN ระบบ 2K 47-ไลน์ รหัส 47-8038L Clearcoat Semi-Gloss", "img": "https://cf.shopee.co.th/file/th-11134207-81ztm-mo7ylb496ubn83", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 313, "code": "41300898107", "name": "สีโป๊วเหลือง บีบีพี BBP พร้อมน้ำยา", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mo6l5evutpfo1c", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 314, "code": "40731251757", "name": "สีแต้มรถยนต์ ฟอร์ดโฟกัส Focus Ford | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-82593-mqlsqo3xhb7vfa", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 315, "code": "40580367535", "name": "ยาขัด SOLAR No.404 ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-mo3k7ocfylfl19", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 316, "code": "40430427440", "name": "กระชอนกรองสี คุณภาพ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mnkvs6ufnvut81", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 317, "code": "40430367926", "name": "เทปสองหน้า 3M 4229 ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mngzfeybt346b3", "cost": 0, "cat": "tape", "catName": "เทป", "tagColor": "#6366f1"}, {"id": 318, "code": "40180441209", "name": "สีอุตสาหกรรม SHOPPER สีเหลือง 32-6011", "img": "https://cf.shopee.co.th/file/th-11134207-81ztl-mo7tow1aqsco74", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 319, "code": "40030912709", "name": "สีพ่นรถยนต์ Nippon Paint Pylac 3000 – สี 3396-S ขนาด 1/4 แกลลอน [ของแท้ 100%]", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mo9fz10wwe8a5a", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 320, "code": "29494697592", "name": "ตลับกรองเคมี 3M กลม ของแท้", "img": "https://cf.shopee.co.th/file/th-11134207-81zti-mnktbc8lmpl25f", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}, {"id": 321, "code": "29486619457", "name": "สีโป๊วจับรอย HB Body Nitro Soft 241", "img": "https://cf.shopee.co.th/file/th-11134207-81ztm-mo6nvg0pygapb1", "cost": 0, "cat": "putty", "catName": "สีโป๊ว", "tagColor": "#f97316"}, {"id": 322, "code": "29294698322", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 600 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mo7rk2c8a3gg77", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 323, "code": "28194869580", "name": "Leyland Auto Spray Touch-Up สีสเปรย์อเนกประสงค์พ่นรถยนต์ (รหัส F-14 สีดำเงา)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztq-mohrw1ki3xu1bb", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 324, "code": "27794683479", "name": "ยาขัด Cana ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81zth-mo3k95y07y11c5", "cost": 0, "cat": "polish", "catName": "น้ำยาขัดและโปะ", "tagColor": "#8b5cf6"}, {"id": 325, "code": "27694485121", "name": "PK PAINT สีสเปรย์ บรอนซ์มุกม่วงประกาย 2K Base Coat", "img": "https://cf.shopee.co.th/file/th-11134207-81ztn-mmfoyln8iwaqf6", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 326, "code": "27594688945", "name": "KURUMA พลาสติกปิดพ่น ชนิดมีเทปกาวในตัว (Kuruma Pre-Taped Masking Film)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztp-modhsnsgnb4d24", "cost": 0, "cat": "tape", "catName": "เทป", "tagColor": "#6366f1"}, {"id": 327, "code": "27344664791", "name": "แลคเกอร์ NORBIN ของแท้ สินค้าพร้อมจัดส่ง", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mo3o1qcdo8w064", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 328, "code": "27244684496", "name": "กระดาษทราย TOA WATERPROOF ABRASIVE PAPER TDCC 80 CC-CW", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mo7rqcedvr42dd", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 329, "code": "27094697741", "name": "แผ่นยางมะตอยอเนกประสงค์ แผ่นปิดรอยต่อกันรั่วซึม / แผ่นแดมป์ลดเสียง (เกรดใช้งานทั่วไป)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztj-mp366io7x5al3b", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 330, "code": "26994698344", "name": "กระดาษทรายจาน 3M GOLD P120 OA", "img": "https://cf.shopee.co.th/file/th-11134207-81ztg-mo7zrp9ji9l2d6", "cost": 0, "cat": "abrasive", "catName": "กระดาษทรายและอุปกรณ์ขัด", "tagColor": "#9333ea"}, {"id": 331, "code": "26944826456", "name": "Leyland Auto Spray Touch-Up A-42 Primer Surfacer Grey", "img": "https://cf.shopee.co.th/file/th-11134207-81zto-moneux0n8fm76d", "cost": 0, "cat": "primer", "catName": "สีรองพื้น", "tagColor": "#84cc16"}, {"id": 332, "code": "26744926862", "name": "สีแต้มรถยนต์ นิสสันโน๊ต Note Nissan | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-8258h-mqlsqpg5j2fj39", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 333, "code": "26444918298", "name": "สีแต้มรถยนต์ มิตซูบิชิ ปาเจโร่ Pajero Mitsubishi | PK PAINT", "img": "https://cf.shopee.co.th/file/sg-11134201-825az-mqlsqplw8z5t04", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 334, "code": "26095103600", "name": "NAKOYA Industrial Lacquer สีพ่นอุตสาหกรรม (เบอร์ 903 สีเวอร์มิลเลี่ยน VERMILLION)", "img": "https://cf.shopee.co.th/file/th-11134207-81ztk-mplrmibtwh6z72", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 335, "code": "24198113898", "name": "แลคเกอร์ CLEAR GUARD", "img": "https://cf.shopee.co.th/file/th-11134207-81ztd-mo3nouhzr01wdd", "cost": 0, "cat": "paint", "catName": "สีและแลคเกอร์", "tagColor": "#ec4899"}, {"id": 336, "code": "24048125146", "name": "แผ่นกรองหน้ากาก 3M 5N11", "img": "https://cf.shopee.co.th/file/th-11134207-81zte-mnktq9dfsdtw8e", "cost": 0, "cat": "safety", "catName": "อุปกรณ์ความปลอดภัย", "tagColor": "#10b981"}];</script>
 <script>
-(function(){
-"use strict";
-const $=id=>document.getElementById(id);
-const gaugeFill=$('gaugeFill'),gaugeValue=$('gaugeValue'),gaugeUnit=$('gaugeUnit'),gaugeLabel=$('gaugeLabel');
-const btnStart=$('btnStart'),btnText=$('btnText'),status=$('status');
-const progressBar=$('progressBar'),progressFill=$('progressFill');
-const CIRCUMFERENCE=2*Math.PI*90;
-gaugeFill.style.strokeDasharray=CIRCUMFERENCE;
-gaugeFill.style.strokeDashoffset=CIRCUMFERENCE;
-let testing=false;
 
-function setGauge(pct,val,unit,label){
-const offset=CIRCUMFERENCE-(pct/100)*CIRCUMFERENCE*0.75;
-gaugeFill.style.strokeDashoffset=offset;
-gaugeValue.textContent=val;
-gaugeUnit.textContent=unit;
-gaugeLabel.textContent=label;
-}
-function setStatus(msg,active){status.textContent=msg;status.className='status'+(active?' active':'');}
-function setProgress(pct){progressBar.classList.add('show');progressFill.style.width=pct+'%';}
-function cacheBust(){return '_cb='+Date.now()+'_'+Math.random().toString(36).substr(2,9);}
+var STATE = { products: [], stock: {}, filter: { cat: 'all', status: 'all', brand: 'all', search: '' }, sort: { by: 'name', dir: 1 }, selection: [], selectedProduct: null, activeView: 'table' };
+var CATEGORIES = [], BRANDS = [];
 
-async function measurePing(){
-setStatus('📡 กำลังวัด Ping / Latency...',true);
-gaugeLabel.textContent='PING';
-const urls=[
-'https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js',
-'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js',
-'https://unpkg.com/axios@1.6.0/dist/axios.min.js'
-];
-const pings=[];
-const rounds=10;
-for(let i=0;i<rounds;i++){
-const url=urls[i%urls.length]+'?'+cacheBust();
-const t0=performance.now();
-try{
-await fetch(url,{method:'HEAD',cache:'no-store',mode:'cors'});
-const t1=performance.now();
-pings.push(t1-t0);
-}catch(e){
-try{
-const t0b=performance.now();
-await fetch(url,{cache:'no-store',mode:'cors'});
-pings.push(performance.now()-t0b);
-}catch(e2){pings.push(999);}
-}
-setGauge(Math.min((i+1)/rounds*100,100),pings[pings.length-1].toFixed(0),'ms','PING');
-setProgress(10+((i+1)/rounds)*20);
-await new Promise(r=>setTimeout(r,50));
-}
-pings.sort((a,b)=>a-b);
-const trimmed=pings.slice(1,-1);
-const avg=trimmed.reduce((s,v)=>s+v,0)/trimmed.length;
-return Math.round(avg*10)/10;
+function init() {
+  STATE.products = PRODUCTS_DATA || [];
+  localStorage.removeItem('pk_products');
+  try { var st = localStorage.getItem('pk_stock'); if (st) { STATE.stock = JSON.parse(st); } } catch(e) {}
+  buildCategories(); buildBrands(); renderSidebar(); renderBrandFilter(); render();
 }
 
-async function measureDownload(){
-setStatus('⬇️ กำลังวัด Download Speed...',true);
-gaugeLabel.textContent='DOWNLOAD';
-const sizes=[5000000,10000000,25000000];
-let totalBytes=0,totalTime=0;
-const startTime=performance.now();
-const duration=12000;
-let chunkIdx=0;
-while(performance.now()-startTime<duration){
-const size=sizes[chunkIdx%sizes.length];
-const url='https://speed.cloudflare.com/__down?bytes='+size+'&'+cacheBust();
-const t0=performance.now();
-try{
-const resp=await fetch(url,{cache:'no-store',mode:'cors'});
-const reader=resp.body.getReader();
-let received=0;
-while(true){
-const{done,value}=await reader.read();
-if(done)break;
-received+=value.length;
-const elapsed=(performance.now()-t0)/1000;
-if(elapsed>0.3){
-const speedMbps=(received*8)/(elapsed*1000000);
-const pct=Math.min(((performance.now()-startTime)/duration)*100,100);
-setGauge(pct,speedMbps.toFixed(1),'Mbps','DOWNLOAD');
-setProgress(30+pct*0.4);
-}
-}
-totalBytes+=received;
-totalTime+=(performance.now()-t0)/1000;
-}catch(e){
-try{
-const fallbackUrl='https://cdn.jsdelivr.net/gh/nicehash/NiceHashQuickMiner@main/NiceHashQuickMiner.exe?'+cacheBust();
-const t0f=performance.now();
-const resp=await fetch(fallbackUrl,{cache:'no-store',mode:'cors'});
-const blob=await resp.blob();
-const elapsed=(performance.now()-t0f)/1000;
-totalBytes+=blob.size;
-totalTime+=elapsed;
-}catch(e2){break;}
-}
-chunkIdx++;
-if(performance.now()-startTime>duration)break;
-}
-if(totalTime===0)return 0;
-const speedMbps=(totalBytes*8)/(totalTime*1000000);
-return Math.round(speedMbps*100)/100;
+function saveAll() {
+  localStorage.setItem('pk_stock', JSON.stringify(STATE.stock));
+  toast('\u0e1a\u0e31\u0e19\u0e17\u0e36\u0e01\u0e40\u0e23\u0e35\u0e22\u0e1a\u0e23\u0e49\u0e2d\u0e22');
 }
 
-async function measureUpload(){
-setStatus('⬆️ กำลังวัด Upload Speed...',true);
-gaugeLabel.textContent='UPLOAD';
-const sizes=[1000000,2000000,5000000];
-let totalBytes=0,totalTime=0;
-const startTime=performance.now();
-const duration=10000;
-let chunkIdx=0;
-while(performance.now()-startTime<duration){
-const size=sizes[chunkIdx%sizes.length];
-const data=new Blob([new ArrayBuffer(size)]);
-const url='https://httpbin.org/post?'+cacheBust();
-const t0=performance.now();
-try{
-await fetch(url,{method:'POST',body:data,cache:'no-store',mode:'cors',headers:{'Content-Type':'application/octet-stream'}});
-const elapsed=(performance.now()-t0)/1000;
-totalBytes+=size;
-totalTime+=elapsed;
-const speedMbps=(size*8)/(elapsed*1000000);
-const pct=Math.min(((performance.now()-startTime)/duration)*100,100);
-setGauge(pct,speedMbps.toFixed(1),'Mbps','UPLOAD');
-setProgress(70+pct*0.3);
-}catch(e){
-try{
-const url2='https://speed.cloudflare.com/__up?'+cacheBust();
-const t0b=performance.now();
-await fetch(url2,{method:'POST',body:data,cache:'no-store',mode:'cors'});
-const elapsed=(performance.now()-t0b)/1000;
-totalBytes+=size;
-totalTime+=elapsed;
-}catch(e2){}
-}
-chunkIdx++;
-await new Promise(r=>setTimeout(r,100));
-if(performance.now()-startTime>duration)break;
-}
-if(totalTime===0)return 0;
-const speedMbps=(totalBytes*8)/(totalTime*1000000);
-return Math.round(speedMbps*100)/100;
+function buildCategories() {
+  var map = {};
+  STATE.products.forEach(function(p) {
+    var key = p.cat || 'other';
+    if (!map[key]) map[key] = { key: key, name: p.catName || '\u0e2d\u0e37\u0e48\u0e19\u0e46', count: 0 };
+    map[key].count++;
+  });
+  var order = ['paint','primer','hardener','chemical','putty','polish','abrasive','tool','safety','tape','consumable','other'];
+  CATEGORIES = [];
+  order.forEach(function(k) { if (map[k]) CATEGORIES.push(map[k]); });
+  document.getElementById('catCountAll').textContent = STATE.products.length;
 }
 
-window.startTest=async function(){
-if(testing)return;
-testing=true;
-btnStart.disabled=true;
-btnStart.classList.add('loading');
-btnText.textContent='กำลังทดสอบ...';
-$('results').classList.remove('show');
-$('resPing').textContent='—';
-$('resDown').textContent='—';
-$('resUp').textContent='—';
-setGauge(0,'0','Mbps','พร้อมทดสอบ');
-setProgress(0);
-try{
-const ping=await measurePing();
-$('resPing').textContent=ping;
-setGauge(100,ping,'ms','PING ✓');
-await new Promise(r=>setTimeout(r,600));
-
-const down=await measureDownload();
-$('resDown').textContent=down.toFixed(2);
-setGauge(100,down.toFixed(1),'Mbps','DOWNLOAD ✓');
-await new Promise(r=>setTimeout(r,600));
-
-const up=await measureUpload();
-$('resUp').textContent=up.toFixed(2);
-setGauge(100,up.toFixed(1),'Mbps','UPLOAD ✓');
-
-setProgress(100);
-setStatus('✅ ทดสอบเสร็จสิ้น!',false);
-gaugeLabel.textContent='เสร็จสิ้น ✓';
-gaugeValue.textContent=down.toFixed(1);
-gaugeUnit.textContent='Mbps';
-$('results').classList.add('show');
-}catch(err){
-setStatus('❌ เกิดข้อผิดพลาด: '+err.message,false);
-console.error(err);
-}finally{
-testing=false;
-btnStart.disabled=false;
-btnStart.classList.remove('loading');
-btnText.textContent='ทดสอบอีกครั้ง';
-setTimeout(()=>{progressBar.classList.remove('show');},2000);
+function buildBrands() {
+  var found = {};
+  STATE.products.forEach(function(p) {
+    var n = p.name.toUpperCase();
+    ['3M','TOA','NAKOYA','LEYLAND','BIC BEN','BBP','HAMMER','STAR','TATENO','CROMAX','RGB','NASON','AICA','SUMO','DINCO','KURUMA','GLASURIT','INNOVA','HIT','BODY','SOLAR','PK PAINT'].forEach(function(b) {
+      if (n.indexOf(b) !== -1) found[b] = true;
+    });
+  });
+  BRANDS = Object.keys(found).sort();
 }
-};
-})();
+
+function renderSidebar() {
+  var el = document.getElementById('sidebarNav');
+  CATEGORIES.forEach(function(c) {
+    var div = document.createElement('div');
+    div.className = 'sidebar-item' + (STATE.filter.cat === c.key ? ' active' : '');
+    div.setAttribute('data-cat', c.key);
+    div.innerHTML = '<span class="icon"></span>' + c.name + '<span class="count-badge">' + c.count + '</span>';
+    div.onclick = function() { filterByCat(c.key); };
+    el.appendChild(div);
+  });
+}
+
+function renderBrandFilter() {
+  var sel = document.getElementById('brandFilter');
+  BRANDS.forEach(function(b) {
+    var opt = document.createElement('option');
+    opt.value = b; opt.textContent = b;
+    sel.appendChild(opt);
+  });
+}
+
+function filterByCat(cat) {
+  STATE.filter.cat = cat;
+  document.querySelectorAll('#sidebarNav .sidebar-item').forEach(function(el) {
+    el.classList.toggle('active', el.getAttribute('data-cat') === cat);
+  });
+  render();
+  if (window.innerWidth <= 1024) closeSidebar();
+}
+
+function filterByStatus(status) {
+  STATE.filter.status = status;
+  document.getElementById('statusFilter').value = status;
+  render();
+}
+
+function onSearch() {
+  clearTimeout(STATE._searchTimer);
+  STATE._searchTimer = setTimeout(function() {
+    STATE.filter.search = document.getElementById('searchInput').value;
+    render();
+  }, 150);
+}
+
+function getFiltered() {
+  var f = STATE.filter;
+  return STATE.products.filter(function(p) {
+    if (f.cat !== 'all' && p.cat !== f.cat) return false;
+    if (f.brand !== 'all') { var n = p.name.toUpperCase(); if (n.indexOf(f.brand.toUpperCase()) === -1) return false; }
+    if (f.search) { var q = f.search.toLowerCase().trim(); var terms = q.split(/\s+/); var t = (p.code + ' ' + p.name).toLowerCase(); for (var i = 0; i < terms.length; i++) { if (t.indexOf(terms[i]) === -1) return false; } }
+    if (f.status !== 'all') { var total = getTotalStock(p.id); if (f.status === 'in' && total <= 10) return false; if (f.status === 'low' && (total > 10 || total === 0)) return false; if (f.status === 'out' && total > 0) return false; }
+    return true;
+  });
+}
+
+function sortBy(field) {
+  if (STATE.sort.by === field) { STATE.sort.dir *= -1; } else { STATE.sort.by = field; STATE.sort.dir = 1; }
+  ['name','code'].forEach(function(f) { var el = document.getElementById('sortIcon' + f.charAt(0).toUpperCase() + f.slice(1)); if (el) el.textContent = STATE.sort.by === f ? (STATE.sort.dir === 1 ? '\u2193' : '\u2191') : '\u2195'; });
+  render();
+}
+
+function getStock(id) { return STATE.stock['p' + id] || { pcs: 0, box: 0, ppb: 1, cost: 0 }; }
+function getTotalStock(id) { var s = getStock(id); return s.pcs + s.box * s.ppb; }
+function getStatus(id) { var t = getTotalStock(id); if (t > 10) return 'in'; if (t > 0) return 'low'; return 'out'; }
+function getStatusText(id) { var t = getTotalStock(id); if (t > 10) return '\u0e21\u0e35'; if (t > 0) return '\u0e43\u0e01\u0e25\u0e49\u0e2b\u0e21\u0e14'; return '\u0e2b\u0e21\u0e14'; }
+
+function render() {
+  var list = getFiltered();
+  list.sort(function(a, b) { var va = a[STATE.sort.by] || '', vb = b[STATE.sort.by] || ''; if (typeof va === 'number') return (va - vb) * STATE.sort.dir; return va.localeCompare(vb, 'th') * STATE.sort.dir; });
+  var tbody = document.getElementById('tableBody'), empty = document.getElementById('emptyState'), countEl = document.getElementById('resultsCount');
+  if (list.length === 0) { tbody.innerHTML = ''; empty.style.display = 'flex'; countEl.textContent = '0 \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23'; updateStats([]); return; }
+  empty.style.display = 'none';
+  countEl.textContent = list.length + ' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23' + (list.length < STATE.products.length ? ' (\u0e08\u0e32\u0e01 ' + STATE.products.length + ')' : '');
+  var html = '', selSet = {};
+  STATE.selection.forEach(function(id) { selSet[id] = true; });
+  list.forEach(function(p) {
+    var s = getStock(p.id), total = getTotalStock(p.id), status = getStatus(p.id), sel = selSet[p.id] || false, img = p.img || '';
+    html += '<tr class="' + (sel ? 'selected' : '') + '" data-id="' + p.id + '">'
+      + '<td onclick="event.stopPropagation()"><input type="checkbox" ' + (sel ? 'checked' : '') + ' onchange="toggleSelect(' + p.id + ')" aria-label="\u0e40\u0e25\u0e37\u0e2d\u0e01"></td>'
+      + '<td onclick="openDrawer(' + p.id + ')">' + (img ? '<img class="mini-img" src="' + img + '" loading="lazy" onerror="this.style.display=\'none\'">' : '<div class="mini-img" style="display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text-tertiary)">\ud83d\udcf7</div>') + '</td>'
+      + '<td onclick="openDrawer(' + p.id + ')"><strong>' + p.name + '</strong></td>'
+      + '<td onclick="openDrawer(' + p.id + ')" style="font-size:12px;color:var(--text-tertiary);font-family:var(--font-mono)">' + (p.code || '-') + '</td>'
+      + '<td onclick="openDrawer(' + p.id + ')"><span class="cat-tag" style="background:' + (p.tagColor || '#e2e8f0') + '22;color:' + (p.tagColor || '#64748b') + '">' + (p.catName || '\u0e2d\u0e37\u0e48\u0e19\u0e46') + '</span></td>'
+      + '<td><div class="stock-inline"><button class="stock-btn" onclick="adjustStock(' + p.id + ',\'pcs\',-1);event.stopPropagation()">\u2212</button><input type="number" min="0" value="' + s.pcs + '" onchange="setStock(' + p.id + ',\'pcs\',this.value);render()" onfocus="this.select()" onclick="event.stopPropagation()"><span class="stock-unit">\u0e0a\u0e34\u0e49\u0e19</span><button class="stock-btn" onclick="adjustStock(' + p.id + ',\'pcs\',1);event.stopPropagation()">+</button></div></td>'
+      + '<td><div class="stock-inline"><button class="stock-btn" onclick="adjustStock(' + p.id + ',\'box\',-1);event.stopPropagation()">\u2212</button><input type="number" min="0" value="' + s.box + '" onchange="setStock(' + p.id + ',\'box\',this.value);render()" onfocus="this.select()" onclick="event.stopPropagation()"><span class="stock-unit">\u0e01\u0e25\u0e48\u0e2d\u0e07</span><button class="stock-btn" onclick="adjustStock(' + p.id + ',\'box\',1);event.stopPropagation()">+</button></div></td>'
+      + '<td onclick="openDrawer(' + p.id + ')"><div class="stock-inline"><input type="number" min="1" value="' + s.ppb + '" onchange="setStock(' + p.id + ',\'ppb\',this.value);render()" onclick="event.stopPropagation()" style="width:44px"></div></td>'
+      + '<td onclick="openDrawer(' + p.id + ')"><span class="stock-badge ' + status + '">' + total + ' \u0e2b\u0e19\u0e48\u0e27\u0e22</span></td>'
+      + '<td><button class="action-btn danger" onclick="deleteProduct(' + p.id + ');event.stopPropagation()" aria-label="\u0e25\u0e1a">\ud83d\uddd1</button></td></tr>';
+  });
+  tbody.innerHTML = html;
+  updateStats(list);
+}
+
+function updateStats(list) {
+  var total = 0, inC = 0, lowC = 0, outC = 0;
+  list.forEach(function(p) { var t = getTotalStock(p.id); total += t; if (t > 10) inC++; else if (t > 0) lowC++; else outC++; });
+  document.getElementById('statTotal').textContent = total; document.getElementById('statIn').textContent = inC; document.getElementById('statLow').textContent = lowC; document.getElementById('statOut').textContent = outC;
+}
+
+function adjustStock(id, field, delta) { var key = 'p' + id; if (!STATE.stock[key]) STATE.stock[key] = { pcs: 0, box: 0, ppb: 1, cost: 0 }; var newVal = (STATE.stock[key][field] || 0) + delta; if (newVal < 0) newVal = 0; STATE.stock[key][field] = newVal; render(); }
+function setStock(id, field, val) { var key = 'p' + id; if (!STATE.stock[key]) STATE.stock[key] = { pcs: 0, box: 0, ppb: 1, cost: 0 }; STATE.stock[key][field] = Math.max(0, parseInt(val) || 0); render(); }
+
+function toggleAll() { var checked = document.getElementById('selectAll').checked; var list = getFiltered(); STATE.selection = checked ? list.map(function(p) { return p.id; }) : []; render(); updateSelectionBar(); }
+function toggleSelect(id) { var idx = STATE.selection.indexOf(id); if (idx === -1) STATE.selection.push(id); else STATE.selection.splice(idx, 1); render(); updateSelectionBar(); }
+function clearSelection() { STATE.selection = []; render(); updateSelectionBar(); }
+function updateSelectionBar() { var bar = document.getElementById('selectionBar'); var count = STATE.selection.length; document.getElementById('selectionCount').textContent = '\u0e40\u0e25\u0e37\u0e2d\u0e01 ' + count + ' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23'; bar.classList.toggle('show', count > 0); }
+
+function batchAddPcs() { STATE.selection.forEach(function(id) { var key = 'p' + id; if (!STATE.stock[key]) STATE.stock[key] = { pcs: 0, box: 0, ppb: 1, cost: 0 }; STATE.stock[key].pcs = (STATE.stock[key].pcs || 0) + 1; }); toast('\u0e40\u0e1e\u0e34\u0e48\u0e21 1 \u0e0a\u0e34\u0e49\u0e19 \u0e43\u0e2b\u0e49 ' + STATE.selection.length + ' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23'); render(); }
+function batchAddBox() { STATE.selection.forEach(function(id) { var key = 'p' + id; if (!STATE.stock[key]) STATE.stock[key] = { pcs: 0, box: 0, ppb: 1, cost: 0 }; STATE.stock[key].box = (STATE.stock[key].box || 0) + 1; }); toast('\u0e40\u0e1e\u0e34\u0e48\u0e21 1 \u0e01\u0e25\u0e48\u0e2d\u0e07 \u0e43\u0e2b\u0e49 ' + STATE.selection.length + ' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23'); render(); }
+
+function batchExport() { var rows = [['\u0e23\u0e2b\u0e31\u0e2a','\u0e0a\u0e37\u0e48\u0e2d\u0e2a\u0e34\u0e19\u0e04\u0e49\u0e32','\u0e0a\u0e34\u0e49\u0e19','\u0e01\u0e25\u0e48\u0e2d\u0e07','\u0e0a\u0e34\u0e49\u0e19/\u0e01\u0e25\u0e48\u0e2d\u0e07','\u0e23\u0e27\u0e21']]; STATE.selection.forEach(function(id) { var p = STATE.products.find(function(x) { return x.id === id; }); if (!p) return; var s = getStock(id); rows.push([p.code||'', p.name, s.pcs, s.box, s.ppb, s.pcs+s.box*s.ppb]); }); downloadCsv(rows, 'stock_selected.csv'); clearSelection(); toast('\u0e2a\u0e48\u0e07\u0e2d\u0e2d\u0e01 ' + (rows.length-1) + ' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23'); }
+function batchDelete() { if (!confirm('\u0e25\u0e1a ' + STATE.selection.length + ' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23?')) return; var set = {}; STATE.selection.forEach(function(id) { set[id] = true; }); STATE.products = STATE.products.filter(function(p) { return !set[p.id]; }); STATE.selection.forEach(function(id) { delete STATE.stock['p' + id]; }); clearSelection(); saveAll(); render(); toast('\u0e25\u0e1a\u0e40\u0e23\u0e35\u0e22\u0e1a\u0e23\u0e49\u0e2d\u0e22'); }
+
+function openDrawer(id) {
+  var p = STATE.products.find(function(x) { return x.id === id; }); if (!p) return;
+  STATE.selectedProduct = p; var s = getStock(id); var total = getTotalStock(id); var body = document.getElementById('drawerBody'); var img = p.img || '';
+  body.innerHTML = ''
+    + (img ? '<img class="product-img" src="' + img + '" alt="' + p.name + '">' : '<div class="product-img" style="display:flex;align-items:center;justify-content:center;font-size:48px;color:var(--text-tertiary)">\ud83d\udce6</div>')
+    + '<div class="field"><label>\u0e0a\u0e37\u0e48\u0e2d\u0e2a\u0e34\u0e19\u0e04\u0e49\u0e32</label><div class="value"><strong>' + p.name + '</strong></div></div>'
+    + '<div class="field"><label>\u0e23\u0e2b\u0e31\u0e2a\u0e2a\u0e34\u0e19\u0e04\u0e49\u0e32</label><div class="value" style="font-family:var(--font-mono);font-size:12px">' + (p.code||'-') + '</div></div>'
+    + '<div class="field"><label>\u0e2b\u0e21\u0e27\u0e14\u0e2b\u0e21\u0e39\u0e48</label><div class="value"><span class="cat-tag" style="background:'+(p.tagColor||'#e2e8f0')+'22;color:'+(p.tagColor||'#64748b')+'">'+(p.catName||'\u0e2d\u0e37\u0e48\u0e19\u0e46')+'</span></div></div>'
+    + '<div class="field"><label>\u0e04\u0e07\u0e40\u0e2b\u0e25\u0e37\u0e2d</label><div class="value"><span class="stock-badge '+getStatus(id)+'">'+total+' \u0e2b\u0e19\u0e48\u0e27\u0e22</span></div></div>'
+    + '<div class="field-row"><div class="field"><label>\u0e0a\u0e34\u0e49\u0e19</label><input type="number" min="0" value="'+s.pcs+'" id="drwPcs" onchange="drawerUpdate()"></div><div class="field"><label>\u0e01\u0e25\u0e48\u0e2d\u0e07</label><input type="number" min="0" value="'+s.box+'" id="drwBox" onchange="drawerUpdate()"></div></div>'
+    + '<div class="field"><label>\u0e23\u0e30\u0e14\u0e31\u0e1a\u0e15\u0e48\u0e2d\u0e01\u0e25\u0e48\u0e2d\u0e07</label><input type="number" min="1" value="'+s.ppb+'" id="drwPpb" onchange="drawerUpdate()"></div>'
+    + '<div class="field"><label>\u0e15\u0e49\u0e19\u0e17\u0e38\u0e19</label><input type="number" min="0" value="'+(s.cost||0)+'" id="drwCost" onchange="drawerUpdate()"></div>';
+  document.getElementById('drawerTitle').textContent = p.name; document.getElementById('drawerOverlay').classList.add('open'); document.getElementById('drawer').classList.add('open');
+}
+function drawerUpdate() { var p = STATE.selectedProduct; if (!p) return; var key='p'+p.id; if(!STATE.stock[key]) STATE.stock[key]={pcs:0,box:0,ppb:1,cost:0}; STATE.stock[key].pcs=Math.max(0,parseInt(document.getElementById('drwPcs').value)||0); STATE.stock[key].box=Math.max(0,parseInt(document.getElementById('drwBox').value)||0); STATE.stock[key].ppb=Math.max(1,parseInt(document.getElementById('drwPpb').value)||1); STATE.stock[key].cost=Math.max(0,parseInt(document.getElementById('drwCost').value)||0); render(); }
+function saveDrawer() { drawerUpdate(); saveAll(); closeDrawer(); }
+function closeDrawer() { document.getElementById('drawerOverlay').classList.remove('open'); document.getElementById('drawer').classList.remove('open'); STATE.selectedProduct=null; }
+function openAddModal() { document.getElementById('addModal').classList.add('open'); }
+function closeAddModal() { document.getElementById('addModal').classList.remove('open'); }
+function submitAdd() {
+  var name=document.getElementById('addName').value.trim(); if(!name){toast('\u0e01\u0e23\u0e38\u0e13\u0e32\u0e23\u0e30\u0e1a\u0e38\u0e0a\u0e37\u0e48\u0e2d\u0e2a\u0e34\u0e19\u0e04\u0e49\u0e32');return;}
+  var maxId=0; STATE.products.forEach(function(p){if(p.id>maxId)maxId=p.id;});
+  var newP={id:maxId+1,code:document.getElementById('addCode').value.trim(),name:name,cost:parseInt(document.getElementById('addCost').value)||0,img:document.getElementById('addImg').value.trim(),cat:'other',catName:'\u0e2d\u0e37\u0e48\u0e19\u0e46',tagColor:'#64748b'};
+  STATE.products.push(newP); STATE.stock['p'+newP.id]={pcs:parseInt(document.getElementById('addPcs').value)||0,box:parseInt(document.getElementById('addBox').value)||0,ppb:Math.max(1,parseInt(document.getElementById('addPpb').value)||1),cost:newP.cost};
+  closeAddModal(); document.getElementById('addName').value=''; document.getElementById('addCode').value=''; document.getElementById('addImg').value=''; document.getElementById('addCost').value=''; document.getElementById('addPcs').value='0'; document.getElementById('addBox').value='0'; document.getElementById('addPpb').value='1'; saveAll(); render(); toast('\u0e40\u0e1e\u0e34\u0e48\u0e21 "'+name+'" \u0e40\u0e23\u0e35\u0e22\u0e1a\u0e23\u0e49\u0e2d\u0e22');
+}
+function deleteProduct(id){if(!confirm('\u0e25\u0e1a\u0e2a\u0e34\u0e19\u0e04\u0e49\u0e32\u0e19\u0e35\u0e49?'))return; STATE.products=STATE.products.filter(function(p){return p.id!==id;}); delete STATE.stock['p'+id]; saveAll(); render(); toast('\u0e25\u0e1a\u0e40\u0e23\u0e35\u0e22\u0e1a\u0e23\u0e49\u0e2d\u0e22');}
+function downloadCsv(rows,filename){var csv='\uFEFF'+rows.map(function(row){return row.map(function(v){v=String(v);return v.indexOf(',')!==-1||v.indexOf('"')!==-1?'"'+v.replace(/"/g,'""')+'"':v;}).join(',');}).join('\n');var b=new Blob([csv],{type:'text/csv;charset=utf-8'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download=filename||'stock_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(u);}
+function exportCsv(){var rows=[['\u0e23\u0e2b\u0e31\u0e2a','\u0e0a\u0e37\u0e48\u0e2d\u0e2a\u0e34\u0e19\u0e04\u0e49\u0e32','\u0e2b\u0e21\u0e27\u0e14\u0e2b\u0e21\u0e39\u0e48','\u0e0a\u0e34\u0e49\u0e19','\u0e01\u0e25\u0e48\u0e2d\u0e07','\u0e0a\u0e34\u0e49\u0e19/\u0e01\u0e25\u0e48\u0e2d\u0e07','\u0e23\u0e27\u0e21','\u0e15\u0e49\u0e19\u0e17\u0e38\u0e19']];STATE.products.forEach(function(p){var s=getStock(p.id);rows.push([p.code||'',p.name,p.catName||'',s.pcs,s.box,s.ppb,s.pcs+s.box*s.ppb,s.cost||0]);});downloadCsv(rows,'pk_paint_stock.csv');toast('\u0e2a\u0e48\u0e07\u0e2d\u0e2d\u0e01 '+(rows.length-1)+' \u0e23\u0e32\u0e22\u0e01\u0e32\u0e23');}
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');}
+function toast(msg){var el=document.createElement('div');el.className='toast';el.textContent=msg;document.getElementById('toastContainer').appendChild(el);setTimeout(function(){el.classList.add('out');setTimeout(function(){el.remove();},300);},2000);}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeDrawer();closeAddModal();closeSheet();closeSidebar();}if(e.key==='Enter'&&document.getElementById('addModal').classList.contains('open')){submitAdd();}if((e.ctrlKey||e.metaKey)&&e.key==='s'){e.preventDefault();saveAll();}});
+document.addEventListener('DOMContentLoaded',init);
+
 </script>
 </body>
 </html>
